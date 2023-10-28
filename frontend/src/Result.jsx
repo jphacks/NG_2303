@@ -1,21 +1,23 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import './App.css';
 import "./style.css";
 import icon from './icon-check.png';
 
-function App() {
-  const [buttonStates, setButtonStates] = useState(Array(8).fill(false));
-  const navigate = useNavigate();
+function Result() {
+  const location = useLocation();
+  const [buttonStates, setButtonStates] = useState(location.state.buttonStates || Array(8).fill(false));
+
+  useEffect(() => {
+    if (location.state && location.state.buttonStates) {
+      setButtonStates(location.state.buttonStates);
+    }
+  }, [location.state]);
 
   const toggleIcon = index => {
     const newButtonStates = [...buttonStates];
     newButtonStates[index] = !newButtonStates[index];
     setButtonStates(newButtonStates);
-  };
-
-  const verify = () => {
-    navigate('/result', { state: { buttonStates: buttonStates } });
   };
 
   return (
@@ -32,15 +34,15 @@ function App() {
         ))}
       </div>
       <div className="title">
-        <div className="model-s">パンダに見えるのはどれ？</div>
+        <div className="model-s">あなたはAIをだませた！</div>
       </div>
-      <button className="input-field-button" onClick={verify}>
+      <button className="input-field-button">
         <div className="input-field">
-          <div className="text-wrapper">VERIFY</div>
+          <div className="text-wrapper">BACK</div>
         </div>
       </button>
     </div>
   );
 }
 
-export default App;
+export default Result;
