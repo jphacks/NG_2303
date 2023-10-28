@@ -10,12 +10,18 @@ function App() {
         <div className="model-s">パンダに見えるのはどれ？</div>
       </div>
       <div className="div" />
-      <div className="input-field">
-        <div className="text-wrapper">VERIFY</div>
-      </div>
-      <div className="box">
-        <div className="rectangle" />
-      </div>
+      <button className="input-field-button">
+        <div className="input-field">
+          <div className="text-wrapper">VERIFY</div>
+        </div>
+      </button>
+
+      <button className="box-button">
+        <div className="box">
+          <div className="rectangle" />
+        </div>
+      </button>
+
     </div>
   );
 }
