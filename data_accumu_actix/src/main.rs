@@ -38,8 +38,8 @@ async fn una() -> impl Responder {
     }
 }
 
-#[post["/judge-captha"]]
-async fn judge_porker(_request: web::Json<FrontendData>) -> impl Responder {
+#[post["/judge-captcha"]]
+async fn judge_captcha(_request: web::Json<FrontendData>) -> impl Responder {
     // match porker::million_porker(&request.useCards, request.num) {
     //     Ok((role_count, sum_score, loop_num)) => {
     //         porker::debug_judge_role(&role_count, loop_num);
@@ -55,7 +55,7 @@ async fn judge_porker(_request: web::Json<FrontendData>) -> impl Responder {
 }
 
 #[get["/get-capthcha-images"]]
-async fn captha() -> impl Responder {
+async fn get_captha_images() -> impl Responder {
     let frontend_data = FrontendData::new2();
     HttpResponse::Ok().json(frontend_data)
 }
@@ -76,6 +76,8 @@ async fn main() -> std::io::Result<()> {
         App::new()
             .service(get_index)
             .service(una)
+            .service(judge_captcha)
+            .service(judge_captcha)
             .app_data(state.clone())
     })
     .bind(("127.0.0.1", 5001))?
