@@ -40,3 +40,18 @@
 .read-the-docs {
   color: #888;
 }
+
+.desktop {
+  height: 100vh !important;  /* 100% of the viewport height */
+  width: 100vw !important;   /* 100% of the viewport width */
+  position: relative;
+  /* その他のプロパティ */
+}
+
+
+.input-field-button{
+  position: absolute;
+  top: 700px ;
+  left: 715px ;
+}
+
