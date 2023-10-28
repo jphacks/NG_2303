@@ -5,6 +5,46 @@ function App() {
   return (
     <div className="desktop">
       <div className="frame">
+        <div className="box">
+          <button className="rectangle-button">
+            <div className="rectangle"></div>
+          </button>
+        </div>
+        <div className="box">
+          <button className="rectangle-button">
+            <div className="rectangle"></div>
+          </button>
+        </div>
+        <div className="box">
+          <button className="rectangle-button">
+            <div className="rectangle"></div>
+          </button>
+        </div>
+        <div className="box">
+          <button className="rectangle-button">
+            <div className="rectangle"></div>
+          </button>
+        </div>
+        <div className="box">
+          <button className="rectangle-button">
+            <div className="rectangle"></div>
+          </button>
+        </div>
+        <div className="box">
+          <button className="rectangle-button">
+            <div className="rectangle"></div>
+          </button>
+        </div>
+        <div className="box">
+          <button className="rectangle-button">
+            <div className="rectangle"></div>
+          </button>
+        </div>
+        <div className="box">
+          <button className="rectangle-button">
+            <div className="rectangle"></div>
+          </button>
+        </div>
       </div>
       <div className="title">
         <div className="model-s">パンダに見えるのはどれ？</div>
@@ -13,12 +53,6 @@ function App() {
       <button className="input-field-button">
         <div className="input-field">
           <div className="text-wrapper">VERIFY</div>
-        </div>
-      </button>
-
-      <button className="box-button">
-        <div className="box">
-          <div className="rectangle" />
         </div>
       </button>
 

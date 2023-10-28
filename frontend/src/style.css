@@ -15,6 +15,13 @@
     position: absolute;
     top: 333px;
     width: 625px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 2列のグリッドを作成 */
+    grid-template-rows: repeat(2, 1fr);    /* 4行のグリッドを作成 */
+    gap: 0px;                             /* セル間のギャップ */
+    padding: 45px; 
+    justify-content: center;  /* 横方向の中央配置 */
+    align-items: center;      /* 縦方向の中央配置 */
   }
   
   .desktop .title {
@@ -97,8 +104,8 @@
     border: 2px solid transparent; /* 枠線を透明に設定 */
     border-radius: 24px;
     box-shadow: inset 10px 10px 20px #00000040, inset -10px -10px 20px #ffffff40;
-    height: 100px;
-    width: 100px;
+    width: calc(100% - 4px); /* 枠線の幅を考慮 */
+    height: calc(100% - 4px); /* 枠線の幅を考慮 */
     position: absolute;
     color: #7f8493;
     font-family: "Roboto-Bold", Helvetica;
@@ -115,11 +122,17 @@
     border: 2px solid rgb(47, 184, 255); /* ホバー時に枠線の色を変更 */
   }
   
-  .input-field-button, .box-button {
+  
+  .rectangle-button {
     background: none;
     border: none;
     cursor: pointer;
     padding: 0;
     margin: 0;
     outline: none;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
