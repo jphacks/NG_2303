@@ -4,8 +4,10 @@ use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
 
 use serde::{Deserialize, Serialize};
 
-mod database;
 mod accumu;
+mod database;
+
+use accumu::FrontendData;
 
 // #[post["/postcards"]]
 // async fn judge_porker(request: web::Json<Request>) -> impl Responder {
@@ -35,18 +37,31 @@ async fn una() -> impl Responder {
     }
 }
 
+#[post["/judge-captha"]]
+async fn judge_porker(request: web::Json<Request>) -> impl Responder {
+    match porker::million_porker(&request.useCards, request.num) {
+        Ok((role_count, sum_score, loop_num)) => {
+            porker::debug_judge_role(&role_count, loop_num);
+            HttpResponse::Ok().json(Response::new(sum_score, loop_num, role_count))
+        }
+        Err(e) => HttpResponse::BadRequest().body(format!("{}", e)),
+    }
+}
+
+#[get["/get-capthcha-images"]]
+async fn captha() -> impl Responder {
+    let frontend_data = FrontendData::new2();
+    HttpResponse::Ok().json(frontend_data)
+}
+
 ///エントリーポイントです．
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     env_logger::init_from_env(env_logger::Env::new().default_filter_or("info"));
     log::info!("starting HTTP server at http://localhost:5000");
 
-    HttpServer::new(|| {
-        App::new()
-            .service(get_index)
-            .service(una)
-    })
-    .bind(("127.0.0.1", 5001))?
-    .run()
-    .await
+    HttpServer::new(|| App::new().service(get_index).service(una))
+        .bind(("127.0.0.1", 5001))?
+        .run()
+        .await
 }
