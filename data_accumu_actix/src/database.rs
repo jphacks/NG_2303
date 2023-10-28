@@ -36,7 +36,7 @@ impl database{
             row.image_recognition_result,
             true,
             "".to_string(),
-        )
+        );
 
         Ok(data)
     }
