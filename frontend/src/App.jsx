@@ -20,7 +20,7 @@ function App() {
       navigate('/result', { state: { buttonStates: buttonStates } });
     } else {
       // すべてのボタンが押されていない場合は警告ポップアップを表示
-      window.alert('少なくとも1つのボタンを押してください。');
+      window.alert('少なくとも1つの画像を選択してください。');
     }
   };
   
