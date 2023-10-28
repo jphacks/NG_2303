@@ -1,11 +1,10 @@
-//! ideaxtechで作ったソースコードです．Cargo docコマンドを使ってみようということで，一応ドキュメントにしてみました．
-
 use std::env;
 
 use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
 
 mod accumu;
 mod database;
+mod image_upload;
 
 use accumu::FrontendData;
 use sqlx::SqlitePool;
@@ -38,6 +37,7 @@ async fn una() -> impl Responder {
     }
 }
 
+/// フロントから送られてきた，ユーザが選択した画像を物体検出に投げて，結果をDBに保存しフロントに返す．
 #[post["/judge-captcha"]]
 async fn judge_captcha(_request: web::Json<FrontendData>) -> impl Responder {
     // match porker::million_porker(&request.useCards, request.num) {
@@ -54,11 +54,16 @@ async fn judge_captcha(_request: web::Json<FrontendData>) -> impl Responder {
     HttpResponse::Ok().json(is_human)
 }
 
+
+/// フロントに表示するノイズかけた画像を送る
+/// 画像はbase64でエンコードされている．
+/// ラベル，
 #[get["/get-capthcha-images"]]
 async fn get_captha_images() -> impl Responder {
     let frontend_data = FrontendData::new2();
     HttpResponse::Ok().json(frontend_data)
 }
+
 
 ///エントリーポイントです．
 #[actix_web::main]
