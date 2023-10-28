@@ -1,5 +1,6 @@
 use anyhow::Result;
 use serde::{Deserialize, Serialize};
+use sqlx::Database;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct FrontendData {
@@ -33,12 +34,30 @@ pub struct ImageData {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct ObjectDetectionData {
-    image_base64: String,    // 画像データ
-    true_label: String,      // 物体の本来のラベル
-    predicted_label: String, // 物体の誤認識の結果のラベル
-    forbidden_label: bool,   // ユーザが選択してはいけないことを示すラベル（2値）
-    noise_info: String,      // どのようなノイズがかかっているかの情報
-    objects: Vec<Object>,    // 物体検出結果のオブジェクトのリスト
+    pub image_base64: String,    // 画像データ
+    pub true_label: String,      // 物体の本来のラベル
+    pub predicted_label: String, // 物体の誤認識の結果のラベル
+    pub forbidden_label: bool,   // ユーザが選択してはいけないことを示すラベル（2値）
+    pub noise_info: String,      // どのようなノイズがかかっているかの情報
+    // objects: Vec<Object>,    // 物体検出結果のオブジェクトのリスト
+}
+
+impl ObjectDetectionData {
+    pub fn new(
+        image_base64: String,
+        true_label: String,
+        predicted_label: String,
+        forbidden_label: bool,
+        noise_info: String,
+    ) -> Self {
+        Self {
+            image_base64,
+            true_label,
+            predicted_label,
+            forbidden_label,
+            noise_info,
+        }
+    }
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -57,7 +76,7 @@ pub struct BoundingBox {
 }
 
 pub(crate) trait DataAccumu {
-    fn select(&self) -> Result<Vec<ObjectDetectionData>>;
-    fn insert(&self, data: ObjectDetectionData) -> Result<()>;
-    fn delete(&self, id: u64) -> Result<()>;
+    fn select(&self, id: u64, pool: impl Database) -> Result<ObjectDetectionData>;
+    fn insert(&self, data: ObjectDetectionData, pool: impl Database) -> Result<()>;
+    fn delete(&self, id: u64, pool: impl Database) -> Result<()>;
 }
