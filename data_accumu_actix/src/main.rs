@@ -5,6 +5,7 @@ use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
 mod accumu;
 mod database;
 mod image_upload;
+mod aws_s3;
 
 use accumu::FrontendData;
 use sqlx::SqlitePool;
