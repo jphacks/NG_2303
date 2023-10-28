@@ -38,14 +38,19 @@ async fn una() -> impl Responder {
 }
 
 #[post["/judge-captha"]]
-async fn judge_porker(request: web::Json<Request>) -> impl Responder {
-    match porker::million_porker(&request.useCards, request.num) {
-        Ok((role_count, sum_score, loop_num)) => {
-            porker::debug_judge_role(&role_count, loop_num);
-            HttpResponse::Ok().json(Response::new(sum_score, loop_num, role_count))
-        }
-        Err(e) => HttpResponse::BadRequest().body(format!("{}", e)),
-    }
+async fn judge_porker(request: web::Json<FrontendData>) -> impl Responder {
+    // match porker::million_porker(&request.useCards, request.num) {
+    //     Ok((role_count, sum_score, loop_num)) => {
+    //         porker::debug_judge_role(&role_count, loop_num);
+    //         HttpResponse::Ok().json(Response::new(sum_score, loop_num, role_count))
+    //     }
+    //     Err(e) => HttpResponse::BadRequest().body(format!("{}", e)),
+    // }
+
+    //
+    let is_human = true;
+
+    HttpResponse::Ok().json(is_human)
 }
 
 #[get["/get-capthcha-images"]]

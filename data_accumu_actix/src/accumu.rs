@@ -1,7 +1,6 @@
 use anyhow::Result;
 use serde::{Deserialize, Serialize};
 
-
 #[derive(Serialize, Deserialize, Debug)]
 pub struct FrontendData {
     image_label: String,
@@ -9,7 +8,7 @@ pub struct FrontendData {
 }
 
 impl FrontendData {
-    pub fn new(image_label: String, image_base64_vec: Vec<CaptchaImages>) -> Self {
+    pub fn new(image_label: String, image_base64_vec: Vec<ImageData>) -> Self {
         Self {
             image_label,
             image_base64_vec,
@@ -34,18 +33,18 @@ pub struct ImageData {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct ObjectDetectionData {
-    image_base64: String, // 画像データ
-    true_label: String, // 物体の本来のラベル
+    image_base64: String,    // 画像データ
+    true_label: String,      // 物体の本来のラベル
     predicted_label: String, // 物体の誤認識の結果のラベル
-    forbidden_label: bool, // ユーザが選択してはいけないことを示すラベル（2値）
-    noise_info: String, // どのようなノイズがかかっているかの情報
-    objects: Vec<Object>, // 物体検出結果のオブジェクトのリスト
+    forbidden_label: bool,   // ユーザが選択してはいけないことを示すラベル（2値）
+    noise_info: String,      // どのようなノイズがかかっているかの情報
+    objects: Vec<Object>,    // 物体検出結果のオブジェクトのリスト
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Object {
-    label: String, // 物体のラベル
-    confidence: f32, // 物体が存在する確信度
+    label: String,     // 物体のラベル
+    confidence: f32,   // 物体が存在する確信度
     bbox: BoundingBox, // 物体のバウンディングボックス
 }
 
