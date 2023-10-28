@@ -1,6 +1,7 @@
 use anyhow::Result;
 use serde::{Deserialize, Serialize};
-use sqlx::Database;
+use sqlx::{Database, SqlitePool};
+use async_trait::async_trait;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct FrontendData {
@@ -75,8 +76,10 @@ pub struct BoundingBox {
     y_max: f32, // バウンディングボックスの下端のy座標
 }
 
+/// DIのためのtrait
+#[async_trait]
 pub(crate) trait DataAccumu {
-    fn select(&self, id: u64, pool: impl Database) -> Result<ObjectDetectionData>;
-    fn insert(&self, data: ObjectDetectionData, pool: impl Database) -> Result<()>;
-    fn delete(&self, id: u64, pool: impl Database) -> Result<()>;
+    async fn select(&self, id: i64, pool: SqlitePool) -> Result<ObjectDetectionData>;
+    async fn insert(&self, data: ObjectDetectionData, pool: SqlitePool) -> Result<()>;
+    async fn delete(&self, id: i64, pool: SqlitePool) -> Result<()>;
 }
