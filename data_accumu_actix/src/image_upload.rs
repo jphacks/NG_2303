@@ -1,6 +1,5 @@
 use std::{env, path::{Path, PathBuf}, fs::File, io::Write, time::Duration};
 
-use bytes::Bytes;
 use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
 use aws_sdk_s3::{operation::{
     copy_object::{CopyObjectError, CopyObjectOutput},
