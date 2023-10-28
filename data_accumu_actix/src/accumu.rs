@@ -56,7 +56,7 @@ pub struct BoundingBox {
     y_max: f32, // バウンディングボックスの下端のy座標
 }
 
-trait DataAccumu {
+pub(crate) trait DataAccumu {
     fn select(&self) -> Result<Vec<ObjectDetectionData>>;
     fn insert(&self, data: ObjectDetectionData) -> Result<()>;
     fn delete(&self, id: u64) -> Result<()>;

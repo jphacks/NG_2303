@@ -1,5 +1,7 @@
 //! ideaxtechで作ったソースコードです．Cargo docコマンドを使ってみようということで，一応ドキュメントにしてみました．
 
+use std::env;
+
 use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
 
 use serde::{Deserialize, Serialize};
@@ -8,6 +10,7 @@ mod accumu;
 mod database;
 
 use accumu::FrontendData;
+use sqlx::{SqlitePool, Sqlite, Pool};
 
 // #[post["/postcards"]]
 // async fn judge_porker(request: web::Json<Request>) -> impl Responder {
@@ -65,8 +68,19 @@ async fn main() -> std::io::Result<()> {
     env_logger::init_from_env(env_logger::Env::new().default_filter_or("info"));
     log::info!("starting HTTP server at http://localhost:5000");
 
-    HttpServer::new(|| App::new().service(get_index).service(una))
+    let pool = SqlitePool::connect(&env::var("DATABASE_URL").unwrap())
+    .await
+    .unwrap();
+
+    let state = web::Data::new(pool);
+
+    HttpServer::new(move || 
+        App::new()
+        .service(get_index)
+        .service(una)
+        .app_data(state.clone()))
         .bind(("127.0.0.1", 5001))?
         .run()
         .await
+
 }
