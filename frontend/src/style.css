@@ -145,3 +145,33 @@
     align-items: center;
     outline: none !important;
   }
+  .rectangle-button .icon-check{
+    height: 40px;
+    width: 40px;
+    position: absolute;
+    top: -10px;
+    left: -10px;
+  }
+
+  .frame1 {
+    background: radial-gradient(50% 50% at 50% 50%, rgba(84, 86, 89, 0.5) 0%, rgba(35, 38, 41, 0.5) 100%);
+    background-color: rgba(255, 255, 255, 1);
+    border: 1.5px solid;
+    border-color: transparent;
+    border-radius: 40px;
+    height: 44px;
+    position: relative;
+    width: 44px;
+    background: none;
+    border: none;
+  }
+  
+  .frame1 .icon-check {
+    height: 0px;
+    left: 0px;
+    position: absolute;
+    top: 13px;
+    width: 22px;
+    background: none;
+    border: none;
+  }
