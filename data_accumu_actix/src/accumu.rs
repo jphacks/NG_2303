@@ -39,7 +39,7 @@ pub struct ObjectDetectionData {
     pub predicted_label: String, // 物体の誤認識の結果のラベル
     pub forbidden_label: bool,   // ユーザが選択してはいけないことを示すラベル（2値）
     pub noise_info: String,      // どのようなノイズがかかっているかの情報
-    // objects: Vec<Object>,    // 物体検出結果のオブジェクトのリスト
+                                 // objects: Vec<Object>,    // 物体検出結果のオブジェクトのリスト
 }
 
 impl ObjectDetectionData {

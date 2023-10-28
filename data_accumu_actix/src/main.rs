@@ -4,13 +4,11 @@ use std::env;
 
 use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
 
-use serde::{Deserialize, Serialize};
-
 mod accumu;
 mod database;
 
 use accumu::FrontendData;
-use sqlx::{Pool, Sqlite, SqlitePool};
+use sqlx::SqlitePool;
 
 // #[post["/postcards"]]
 // async fn judge_porker(request: web::Json<Request>) -> impl Responder {
@@ -41,7 +39,7 @@ async fn una() -> impl Responder {
 }
 
 #[post["/judge-captha"]]
-async fn judge_porker(request: web::Json<FrontendData>) -> impl Responder {
+async fn judge_porker(_request: web::Json<FrontendData>) -> impl Responder {
     // match porker::million_porker(&request.useCards, request.num) {
     //     Ok((role_count, sum_score, loop_num)) => {
     //         porker::debug_judge_role(&role_count, loop_num);
