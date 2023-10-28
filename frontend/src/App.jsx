@@ -15,8 +15,15 @@ function App() {
   };
 
   const verify = () => {
-    navigate('/result', { state: { buttonStates: buttonStates } });
+    // someメソッドでbuttonStates配列に少なくとも1つtrueが存在するか確認
+    if (buttonStates.some(state => state === true)) {
+      navigate('/result', { state: { buttonStates: buttonStates } });
+    } else {
+      // すべてのボタンが押されていない場合は警告ポップアップを表示
+      window.alert('少なくとも1つのボタンを押してください。');
+    }
   };
+  
 
   return (
     <div className="desktop">
