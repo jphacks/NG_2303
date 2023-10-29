@@ -12,7 +12,7 @@
 # ]
 
 
-GET https://jphacks.shuttleapp.rs/Una HTTP/1.1
+# GET https://jphacks.shuttleapp.rs/Una HTTP/1.1
 
 
 # POST https://jphacks.shuttleapp.rs/image_upload HTTP/1.1
@@ -33,3 +33,24 @@ GET https://jphacks.shuttleapp.rs/Una HTTP/1.1
 #     "noise_info":"noised",
 #     "forbidden_label":false
 # }
+
+POST https://vision.googleapis.com/v1/images:annotate
+Content-Type: application/json
+
+{
+  "requests":[
+    {
+      "image":{
+"source": {
+          "imageUri": "gs://cloud-samples-data/vision/demo-img.jpg"
+}
+      },
+      "features":[
+        {
+          "type":"LABEL_DETECTION",
+          "maxResults":1
+        }
+      ]
+    }
+  ]
+}
