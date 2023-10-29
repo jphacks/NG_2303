@@ -119,6 +119,8 @@ async fn actix_web(
 
     let state = web::Data::new(AppState { pool });
 
+    let a  = aws_config::;
+    let b = aws_sdk_s3::Client::new(&a);
     let secret = if let Some(secret) = secret_store.get("MY_API_KEY") {
         secret
     } else {
