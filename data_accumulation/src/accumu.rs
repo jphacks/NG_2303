@@ -1,13 +1,13 @@
 use anyhow::Result;
 use async_trait::async_trait;
 use serde::{Deserialize, Serialize};
-use sqlx::{Database, PgPool, FromRow};
+use sqlx::{FromRow, PgPool};
 
 /// フロント，バック間で送信，受信されるデータ型
-#[derive(Serialize, Deserialize, Debug,FromRow)]
-struct BeJudgeImages {
-    object_label: String, //be_judge_imagesに含まれる画像のラベル 1種類しかないはずなので，ここにも持ってきた
-    noized_images: Vec<NoisedImage>,
+#[derive(Serialize, Deserialize, Debug, FromRow, Clone)]
+pub struct BeJudgeImages {
+    pub object_label: String, //be_judge_imagesに含まれる画像のラベル 1種類しかないはずなので，ここにも持ってきた
+    pub noized_images: Vec<NoisedImage>,
 }
 impl BeJudgeImages {
     pub fn new(object_label: String, noized_images: Vec<NoisedImage>) -> Self {
@@ -27,7 +27,7 @@ impl BeJudgeImages {
 
 /// 画像1つあたりのデータ型
 /// DBにもこの型で保存する
-#[derive(Serialize, Deserialize, Debug, FromRow)]
+#[derive(Serialize, Deserialize, Debug, FromRow, Clone)]
 pub struct NoisedImage {
     pub image_url: String, // Amazon S3からのURL
     //image_base64: String,になる可能性もある
@@ -63,9 +63,9 @@ impl NoisedImage {
 
 // うまくいかないので設計書みたいに使われてるだけ
 #[async_trait]
-pub trait DataStore {
-    async fn select(&self, object_label: &str, pool: PgPool) -> Result<Vec<NoisedImage>>;
-    async fn insert(&self, data: NoisedImage, pool: PgPool) -> Result<()>;
+pub trait NoisedImageStore {
+    async fn select(&self, object_label: &str, pool: &PgPool) -> Result<Vec<NoisedImage>>;
+    async fn insert(&self, data: NoisedImage, pool: &PgPool) -> Result<()>;
 }
 
 #[derive(Serialize, Deserialize, Debug, FromRow)]
@@ -100,10 +100,10 @@ impl ObjectDetectionData {
 
 // うまくいかないので設計書みたいに使われてるだけ
 #[async_trait]
-pub(crate) trait DataAccumu {
-    async fn select(&self, id: i64, pool: PgPool) -> Result<ObjectDetectionData>;
-    async fn insert(&self, data: ObjectDetectionData, pool: PgPool) -> Result<()>;
-    async fn delete(&self, id: i64, pool: PgPool) -> Result<()>;
+pub trait ObjectDetectionDataStore {
+    async fn select(&self, id: i64, pool: &PgPool) -> Result<ObjectDetectionData>;
+    async fn insert(&self, data: ObjectDetectionData, pool: &PgPool) -> Result<()>;
+    // async fn delete(&self, id: i64, pool: &PgPool) -> Result<()>;
 }
 
 // 少なくともこの2日の期間中は廃止するデータ型

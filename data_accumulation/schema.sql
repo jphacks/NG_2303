@@ -1,11 +1,5 @@
-DROP TABLE IF EXISTS todos;
-DROP TABLE IF EXISTS object_detection_data;
+-- DROP TABLE IF EXISTS object_detection_data;
 DROP TABLE IF EXISTS noised_images;
-
-CREATE TABLE todos (
-  id serial PRIMARY KEY,
-  note TEXT NOT NULL
-);
 
 CREATE TABLE IF NOT EXISTS object_detection_data (
     id     serial    PRIMARY KEY     NOT NULL,
@@ -26,3 +20,16 @@ CREATE TABLE IF NOT EXISTS noised_images (
     forbidden_label    BOOLEAN                NOT NULL
     -- 本来はboor型にしたいが，sqlite3ではboolean型がないためinteger型で代用
 );
+
+-- テストデータを入れるクエリ
+
+-- noised_images
+INSERT INTO noised_images (image_url, object_label, noise_info, forbidden_label) VALUES
+    ('https://storage.googleapis.com/jphacks_ng2303/rabbit_mosaic1.png', 'rabbit', 'noise_info', false),
+    ('https://storage.googleapis.com/jphacks_ng2303/Cropped_Image_34.png', 'rabbit', 'noise_info', false),
+    ('https://storage.googleapis.com/jphacks_ng2303/Cropped_Image_35.png', 'rabbit', 'noise_info', false),
+    ('https://storage.googleapis.com/jphacks_ng2303/Cropped_Image_36.png', 'rabbit', 'noise_info', false),
+    ('https://storage.googleapis.com/jphacks_ng2303/Cropped_Image_37.png', 'rabbit', 'noise_info', false),
+    ('https://storage.googleapis.com/jphacks_ng2303/Cropped_Image_39.png', 'rabbit', 'noise_info', false),
+    ('https://storage.googleapis.com/jphacks_ng2303/Cropped_Image_40.png', 'rabbit', 'noise_info', false),
+    ('https://storage.googleapis.com/jphacks_ng2303/Cropped_Image_41.png', 'rabbit', 'noise_info', false);

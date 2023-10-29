@@ -12,7 +12,7 @@
 # ]
 
 
-GET https://jphacks.shuttleapp.rs/Una HTTP/1.1
+# GET https://jphacks.shuttleapp.rs/Una HTTP/1.1
 
 
 # POST https://jphacks.shuttleapp.rs/image_upload HTTP/1.1
@@ -25,8 +25,9 @@ GET https://jphacks.shuttleapp.rs/Una HTTP/1.1
 #     "forbidden_label": true
 # }
 
-# GET https://jphacks.shuttleapp.rs/get-capthcha-images/cat HTTP/1.1
+# GET https://jphacks.shuttleapp.rs/get-capthcha-images/rabbit HTTP/1.1
 
+# GET http://127.0.0.1:8000/get-capthcha-images/rabbit HTTP/1.1
 # {
 #     "image_url":"https",
 #     "object_label":"una",
@@ -34,7 +35,7 @@ GET https://jphacks.shuttleapp.rs/Una HTTP/1.1
 #     "forbidden_label":false
 # }
 
-# POST https://vision.googleapis.com/v1/images:annotate?key='APIkey
+# POST https://vision.googleapis.com/v1/images:annotate?key=
 # Content-Type: application/json
 
 
@@ -49,7 +50,29 @@ GET https://jphacks.shuttleapp.rs/Una HTTP/1.1
 #       "features":[
 #         {
 #           "type":"LABEL_DETECTION",
-#           "maxResults":1
+#           "maxResults":2
+#         }
+#       ]
+#     }
+#   ]
+# }
+
+# 返ってくるデータ
+# {
+#   "responses": [
+#     {
+#       "labelAnnotations": [
+#         {
+#           "mid": "/m/0199g",
+#           "description": "Bicycle",
+#           "score": 0.98430496,
+#           "topicality": 0.98430496
+#         },
+#         {
+#           "mid": "/m/083wq",
+#           "description": "Wheel",
+#           "score": 0.976651,
+#           "topicality": 0.976651
 #         }
 #       ]
 #     }
