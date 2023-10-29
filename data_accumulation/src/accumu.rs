@@ -1,10 +1,10 @@
 use anyhow::Result;
 use async_trait::async_trait;
 use serde::{Deserialize, Serialize};
-use sqlx::{Database, PgPool};
+use sqlx::{Database, PgPool, FromRow};
 
 /// フロント，バック間で送信，受信されるデータ型
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug,FromRow)]
 struct BeJudgeImages {
     object_label: String, //be_judge_imagesに含まれる画像のラベル 1種類しかないはずなので，ここにも持ってきた
     noized_images: Vec<NoisedImage>,
@@ -27,7 +27,7 @@ impl BeJudgeImages {
 
 /// 画像1つあたりのデータ型
 /// DBにもこの型で保存する
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, FromRow)]
 pub struct NoisedImage {
     pub image_url: String, // Amazon S3からのURL
     //image_base64: String,になる可能性もある
@@ -68,7 +68,7 @@ pub trait DataStore {
     async fn insert(&self, data: NoisedImage, pool: PgPool) -> Result<()>;
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, FromRow)]
 pub struct ObjectDetectionData {
     pub image_url: String,       // Amazon S3からのURL
     pub object_label: String,    // 物体の本来のラベル
