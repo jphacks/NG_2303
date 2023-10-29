@@ -99,6 +99,11 @@ impl DataStore for NoisedImage {
     }
 
     async fn insert(&self, data: NoisedImage, pool: SqlitePool) -> Result<()> {
+
+        let forbidden_label = match data.forbidden_label {
+            false => 0,
+            true => 1,
+        };
         sqlx::query!(
             r#"
             INSERT INTO noised_images 
@@ -108,7 +113,7 @@ impl DataStore for NoisedImage {
             data.image_url,
             data.object_label,
             data.noise_info,
-            data.forbidden_label as i32
+            forbidden_label
         )
         .execute(&pool)
         .await?;
