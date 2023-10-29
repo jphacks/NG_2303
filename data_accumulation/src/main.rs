@@ -5,8 +5,7 @@ mod database;
 mod gcp;
 mod image_upload;
 
-use accumu::NoisedImage;
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 use shuttle_secrets::SecretStore;
 use sqlx::PgPool;
 
@@ -16,12 +15,13 @@ use shuttle_actix_web::ShuttleActixWeb;
 use shuttle_runtime::CustomError;
 use sqlx::Executor;
 
-use anyhow::{anyhow};
+use anyhow::anyhow;
 
 use crate::accumu::BeJudgeImages;
-use crate::database::{noised_image::NoisedShuttleSharedDb, object_detected::ObjectShuttleSharedDb};
 use crate::accumu::{NoisedImageStore, ObjectDetectionDataStore};
-
+use crate::database::{
+    noised_image::NoisedShuttleSharedDb, object_detected::ObjectShuttleSharedDb,
+};
 
 /// ラベルとスコアの組
 #[derive(Debug, Serialize, Deserialize)]
@@ -32,13 +32,19 @@ pub struct LabelAndScore {
 }
 
 impl LabelAndScore {
-    pub fn new(image_url: String, label: String, score: f64) -> Self { Self { image_url, label, score } }
+    pub fn new(image_url: String, label: String, score: f64) -> Self {
+        Self {
+            image_url,
+            label,
+            score,
+        }
+    }
 }
 
 #[async_trait::async_trait]
 pub trait objectDetector {
     /// ラベルのスコアの組を返す
-    async fn object_detect(&self, image_url: &str, api_key: &str,) -> Result<LabelAndScore>;
+    async fn object_detect(&self, image_url: &str, api_key: &str) -> Result<LabelAndScore>;
 }
 ///テスト用の関数です．特に意味はありません．helloを返します．
 #[get["/"]]
@@ -60,7 +66,6 @@ async fn una(state: web::Data<AppState>) -> impl Responder {
 
     // let json_string = serde_json::to_string(&vec_i).unwrap();
 
-
     let sercrt = state.secret.clone();
     let image_path = "gs://cloud-samples-data/vision/demo-img.jpg";
 
@@ -74,17 +79,21 @@ async fn una(state: web::Data<AppState>) -> impl Responder {
 
 /// フロントから送られてきた，ユーザが選択した画像を物体検出に投げて，結果をDBに保存しフロントに返す．
 #[post["/judge-captcha"]]
-async fn judge_captcha(request: web::Json<BeJudgeImages>, state: web::Data<AppState>) -> Result<impl Responder> {
+async fn judge_captcha(
+    request: web::Json<BeJudgeImages>,
+    state: web::Data<AppState>,
+) -> Result<impl Responder> {
     // GCPかAWSに投げる
 
     let images_data = request.noized_images.iter();
 
     let sercrt = state.secret.clone();
 
-
     let mut objects_detected = Vec::new();
     for image in images_data {
-        let result = crate::gcp::object_detect(&image.image_url, &sercrt).await.ok();
+        let result = crate::gcp::object_detect(&image.image_url, &sercrt)
+            .await
+            .ok();
         if let Some(label_and_score) = &result {
             // dbに保存
             let object_detected = crate::accumu::ObjectDetectionData::new(
@@ -96,7 +105,9 @@ async fn judge_captcha(request: web::Json<BeJudgeImages>, state: web::Data<AppSt
                 image.noise_info.clone(),
             );
 
-            let r  = ObjectShuttleSharedDb.insert(object_detected, &state.pool).await;
+            let r = ObjectShuttleSharedDb
+                .insert(object_detected, &state.pool)
+                .await;
             match r {
                 Err(e) => log::error!("error: {}", e),
                 _ => {}
@@ -125,7 +136,9 @@ async fn get_captha_images(
     // let object_label = object_label.clone();
     // HttpResponse::Ok().body(object_label)
 
-    let frontend_data = NoisedShuttleSharedDb.select(&object_label, &state.pool).await;
+    let frontend_data = NoisedShuttleSharedDb
+        .select(&object_label, &state.pool)
+        .await;
     // Okならデータを返す Errならbad requestを返す
     match frontend_data {
         Ok(data) => HttpResponse::Ok().json(data),

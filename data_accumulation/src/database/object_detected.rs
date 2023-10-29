@@ -35,5 +35,4 @@ impl ObjectDetectionDataStore for ObjectShuttleSharedDb {
 
         Ok(())
     }
-
 }
