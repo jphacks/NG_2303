@@ -6,8 +6,10 @@ mod accumu;
 mod aws_s3;
 mod database;
 mod image_upload;
+mod aws_s3_2;
 
 use accumu::NoisedImage;
+use shuttle_secrets::SecretStore;
 use sqlx::PgPool;
 
 use actix_web::middleware::Logger;
@@ -20,6 +22,8 @@ use serde::{Deserialize, Serialize};
 use shuttle_actix_web::ShuttleActixWeb;
 use shuttle_runtime::CustomError;
 use sqlx::{Executor, FromRow};
+
+use anyhow::anyhow;
 
 // #[post["/postcards"]]
 // async fn judge_porker(request: web::Json<Request>) -> impl Responder {
@@ -42,18 +46,28 @@ async fn get_index() -> impl Responder {
 #[get["/Una"]]
 async fn una() -> impl Responder {
 
-    let noied_image = NoisedImage::new(
-        "https://s3-ap-northeast-1.amazonaws.com/una-noised-images/una.jpg".to_string(),
-        "una".to_string(),
-        "noised".to_string(),
-        false,
-    );
+    // let noied_image = NoisedImage::new(
+    //     "https://s3-ap-northeast-1.amazonaws.com/una-noised-images/una.jpg".to_string(),
+    //     "una".to_string(),
+    //     "noised".to_string(),
+    //     false,
+    // );
 
-    let vec_i = vec![noied_image];
+    // let vec_i = vec![noied_image];
 
-    let json_string = serde_json::to_string(&vec_i).unwrap();
+    // let json_string = serde_json::to_string(&vec_i).unwrap();
 
-    HttpResponse::Ok().body(json_string)
+    let l = crate::aws_s3::detect_labels().await;
+
+    match l {
+        Ok(l) => {
+            let b = format!("{:?}", l);
+            HttpResponse::Ok().body(b)
+        },
+        Err(e) => {
+            HttpResponse::BadRequest().body(format!("{}", e))
+        },
+    }
 }
 
 /// フロントから送られてきた，ユーザが選択した画像を物体検出に投げて，結果をDBに保存しフロントに返す．
@@ -97,12 +111,19 @@ struct AppState {
 #[shuttle_runtime::main]
 async fn actix_web(
     #[shuttle_shared_db::Postgres] pool: PgPool,
+    #[shuttle_secrets::Secrets] secret_store: SecretStore,
 ) -> ShuttleActixWeb<impl FnOnce(&mut ServiceConfig) + Send + Clone + 'static> {
     pool.execute(include_str!("../schema.sql"))
         .await
         .map_err(CustomError::new)?;
 
     let state = web::Data::new(AppState { pool });
+
+    let secret = if let Some(secret) = secret_store.get("MY_API_KEY") {
+        secret
+    } else {
+        return Err(anyhow!("secret was not found").into());
+    };
 
     let config = move |cfg: &mut ServiceConfig| {
         cfg.service(
