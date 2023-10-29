@@ -1,23 +1,30 @@
-use std::{env, path::{Path, PathBuf}, fs::File, io::Write, time::Duration};
+use std::{
+    env,
+    fs::File,
+    io::Write,
+    path::{Path, PathBuf},
+    time::Duration,
+};
 
 use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
-use aws_sdk_s3::{operation::{
-    copy_object::{CopyObjectError, CopyObjectOutput},
-    create_bucket::{CreateBucketError, CreateBucketOutput},
-    get_object::{GetObjectError, GetObjectOutput},
-    list_objects_v2::ListObjectsV2Output,
-    put_object::{PutObjectError, PutObjectOutput},
-}, presigning::PresigningConfig};
+use anyhow::Result;
+use aws_config::meta::region::RegionProviderChain;
 use aws_sdk_s3::types::{
     BucketLocationConstraint, CreateBucketConfiguration, Delete, ObjectIdentifier,
 };
-use aws_config::meta::region::RegionProviderChain;
 use aws_sdk_s3::{error::SdkError, primitives::ByteStream, Client};
+use aws_sdk_s3::{
+    operation::{
+        copy_object::{CopyObjectError, CopyObjectOutput},
+        create_bucket::{CreateBucketError, CreateBucketOutput},
+        get_object::{GetObjectError, GetObjectOutput},
+        list_objects_v2::ListObjectsV2Output,
+        put_object::{PutObjectError, PutObjectOutput},
+    },
+    presigning::PresigningConfig,
+};
 use serde::{Deserialize, Serialize};
 use tracing::log::trace;
-use anyhow::Result;
-
-
 
 #[derive(Debug)]
 struct Opt {
@@ -42,8 +49,6 @@ pub async fn upload_object(
         .await
 }
 
-
-
 // // snippet-start:[s3.rust.get_object]
 // /// S3ストレージからオブジェクトを取得し，base64文字列にエンコードされた画像を返す
 // async fn get_object(client: Client, opt: Opt) -> Result<usize, anyhow::Error> {
@@ -67,8 +72,6 @@ pub async fn upload_object(
 //     //     trace!("Intermediate write of {bytes}");
 //     // }
 
-
-
 //     Ok(byte_count)
 // }
 // snippet-end:[s3.rust.get_object]
@@ -82,12 +85,7 @@ pub async fn list_objects(client: &Client, bucket_name: &str) -> Result<()> {
 
     Ok(())
 }
-async fn get_object(
-    client: &Client,
-    bucket: &str,
-    object: &str,
-    expires_in: u64,
-) -> Result<()> {
+async fn get_object(client: &Client, bucket: &str, object: &str, expires_in: u64) -> Result<()> {
     let expires_in = Duration::from_secs(expires_in);
     let presigned_request = client
         .get_object()
@@ -101,12 +99,7 @@ async fn get_object(
     Ok(())
 }
 
-async fn put_object(
-    client: &Client,
-    bucket: &str,
-    object: &str,
-    expires_in: u64,
-) -> Result<()> {
+async fn put_object(client: &Client, bucket: &str, object: &str, expires_in: u64) -> Result<()> {
     let expires_in = Duration::from_secs(expires_in);
 
     let presigned_request = client

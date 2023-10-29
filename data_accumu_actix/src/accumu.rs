@@ -1,17 +1,21 @@
 use anyhow::Result;
+use async_trait::async_trait;
 use serde::{Deserialize, Serialize};
 use sqlx::{Database, SqlitePool};
-use async_trait::async_trait;
-
 
 /// フロント，バック間で送信，受信されるデータ型
 #[derive(Serialize, Deserialize, Debug)]
-struct  BeJudgeImages {
+struct BeJudgeImages {
     object_label: String, //be_judge_imagesに含まれる画像のラベル 1種類しかないはずなので，ここにも持ってきた
     noized_images: Vec<NoizedImage>,
 }
 impl BeJudgeImages {
-    pub fn new(object_label: String, noized_images: Vec<NoizedImage>) -> Self { Self { object_label, noized_images } }
+    pub fn new(object_label: String, noized_images: Vec<NoizedImage>) -> Self {
+        Self {
+            object_label,
+            noized_images,
+        }
+    }
 
     pub fn new_dammy() -> Self {
         Self {
@@ -28,13 +32,24 @@ pub struct NoizedImage {
     image_url: String, // Amazon S3からのURL
     //image_base64: String,になる可能性もある
     object_label: String,
-    noize_info: String, //どのような構造の情報が入るのか決定できないためString
-    forbidden_label: bool,   // ユーザが選択した場合，botの可能性を疑うことを示すラベル
+    noize_info: String,    //どのような構造の情報が入るのか決定できないためString
+    forbidden_label: bool, // ユーザが選択した場合，botの可能性を疑うことを示すラベル
 }
 
-
 impl NoizedImage {
-    pub fn new(image_url: String, object_label: String, noize_info: String, forbidden_label: bool) -> Self { Self { image_url, object_label, noize_info, forbidden_label } }
+    pub fn new(
+        image_url: String,
+        object_label: String,
+        noize_info: String,
+        forbidden_label: bool,
+    ) -> Self {
+        Self {
+            image_url,
+            object_label,
+            noize_info,
+            forbidden_label,
+        }
+    }
 
     pub fn new_dammy() -> Self {
         Self {
@@ -46,11 +61,17 @@ impl NoizedImage {
     }
 }
 
+#[async_trait]
+pub(crate) trait DataStore {
+    async fn select(&self, object_label: &str, pool: SqlitePool) -> Result<ObjectDetectionData>;
+    async fn insert(&self, data: NoizedImage, pool: SqlitePool) -> Result<()>;
+    async fn delete(&self, id: i64, pool: SqlitePool) -> Result<()>;
+}
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct ObjectDetectionData {
-    pub image_url: String,    // Amazon S3からのURL
-    pub object_label: String,      // 物体の本来のラベル
+    pub image_url: String,       // Amazon S3からのURL
+    pub object_label: String,    // 物体の本来のラベル
     pub predicted_label: String, // 物体の誤認識の結果のラベル
     pub confidence: f64,         // 物体が存在する確信度
     pub forbidden_label: bool,   // ユーザが選択してはいけないことを示すラベル（2値）
@@ -76,7 +97,6 @@ impl ObjectDetectionData {
         }
     }
 }
-
 
 /// DIのためのtrait
 #[async_trait]

@@ -3,9 +3,9 @@ use std::env;
 use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
 
 mod accumu;
+mod aws_s3;
 mod database;
 mod image_upload;
-mod aws_s3;
 
 use accumu::NoizedImage;
 use sqlx::SqlitePool;
@@ -55,7 +55,6 @@ async fn judge_captcha(_request: web::Json<NoizedImage>) -> impl Responder {
     HttpResponse::Ok().json(is_human)
 }
 
-
 /// フロントに表示するノイズかけた画像を送る
 /// 画像はbase64でエンコードされている．
 /// ラベル，
@@ -64,7 +63,6 @@ async fn get_captha_images() -> impl Responder {
     let frontend_data = NoizedImage::new_dammy();
     HttpResponse::Ok().json(frontend_data)
 }
-
 
 ///エントリーポイントです．
 #[actix_web::main]
