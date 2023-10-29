@@ -45,7 +45,7 @@ Adversarial ArmorはReactを用いたWebアプリケーションである．
 * React
 * React-Router-DOM
 * Actix-web
-* Shuttle
+* Shuttle (バックエンドのデプロイ先でもある)
   
 #### デバイス
 * 
