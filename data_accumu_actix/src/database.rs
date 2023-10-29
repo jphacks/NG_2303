@@ -1,6 +1,7 @@
 use sqlx::SqlitePool;
 use sqlx::Database;
 use anyhow::Result;
+use sqlx::any::AnyRow;
 
 use crate::accumu::DataAccumu;
 use crate::accumu::ObjectDetectionData;
@@ -20,12 +21,19 @@ async fn select(&self,id:i64,pool: SqlitePool) ->  Result<ObjectDetectionData> {
     .fetch_one(&pool)
     .await?;
 
+    let forbidden_label = match row.forbidden_label {
+        0 => false,
+        1 => true,
+        _ => panic!("forbidden_label is not 0 or 1"),
+    };
+
     let data = crate::accumu::ObjectDetectionData::new(
-        row.base64_image,
-        row.label,
-        row.image_recognition_result,
-        true,
-        "".to_string(),
+        row.image_url,
+        row.object_label,
+        row.predicted_label,
+        row.confidence,
+        forbidden_label,
+        row.noise_info,
     );
 
     Ok(data)
@@ -36,11 +44,14 @@ async fn insert(&self,data:ObjectDetectionData,pool: SqlitePool) -> Result<()> {
     sqlx::query!(
         r#"
         INSERT INTO object_detection_data 
-        (label, image_recognition_result, base64_image)
-        VALUES ($1, $2, $3)
+        (image_url, object_label, predicted_label, confidence, forbidden_label, noise_info)
+        VALUES ($1, $2, $3, $4, $5, $6)
         "#,
-        data.image_base64,
+        data.image_url,
+        data.object_label,
         data.predicted_label,
+        data.confidence,
+        data.forbidden_label,
         data.noise_info
     )
     .execute(&pool)

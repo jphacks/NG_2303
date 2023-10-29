@@ -7,7 +7,7 @@ mod database;
 mod image_upload;
 mod aws_s3;
 
-use accumu::FrontendData;
+use accumu::NoizedImage;
 use sqlx::SqlitePool;
 
 // #[post["/postcards"]]
@@ -40,7 +40,7 @@ async fn una() -> impl Responder {
 
 /// フロントから送られてきた，ユーザが選択した画像を物体検出に投げて，結果をDBに保存しフロントに返す．
 #[post["/judge-captcha"]]
-async fn judge_captcha(_request: web::Json<FrontendData>) -> impl Responder {
+async fn judge_captcha(_request: web::Json<NoizedImage>) -> impl Responder {
     // match porker::million_porker(&request.useCards, request.num) {
     //     Ok((role_count, sum_score, loop_num)) => {
     //         porker::debug_judge_role(&role_count, loop_num);
@@ -61,7 +61,7 @@ async fn judge_captcha(_request: web::Json<FrontendData>) -> impl Responder {
 /// ラベル，
 #[get["/get-capthcha-images"]]
 async fn get_captha_images() -> impl Responder {
-    let frontend_data = FrontendData::new2();
+    let frontend_data = NoizedImage::new_dammy();
     HttpResponse::Ok().json(frontend_data)
 }
 

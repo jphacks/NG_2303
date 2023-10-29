@@ -17,6 +17,8 @@ use serde::{Deserialize, Serialize};
 use tracing::log::trace;
 use anyhow::Result;
 
+use crate::accumu::NoizedImage;
+
 
 /// アップロードする画像を含め必要なデータ
 /// 画像はbase64でエンコードされている．
@@ -31,7 +33,7 @@ pub struct UploadImageData {
 /// 使用する画像をこのサーバに送るための窓口
 /// 画像はbase64でエンコードされている．
 #[post("/image_upload")]
-async fn image_upload() -> impl Responder {
+async fn image_upload(request: web::Json<NoizedImage>) -> impl Responder {
     // 受け取ったノイズ加工済みデータをAmazon S3に保存する
 
     HttpResponse::Ok().body("hello")
