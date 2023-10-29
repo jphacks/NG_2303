@@ -5,4 +5,4 @@
 
 # }
 
-GET https://jphacks.shuttleapp.rs/Una Http/1.1
+GET https://jphacks.shuttleapp.rs/ HTTP/1.1

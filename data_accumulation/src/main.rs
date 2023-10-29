@@ -97,7 +97,7 @@ async fn actix_web(
 
     let config = move |cfg: &mut ServiceConfig| {
         cfg.service(
-            web::scope("/todos")
+            web::scope("")
                 .service(get_index)
                 .service(una)
                 .service(judge_captcha)
