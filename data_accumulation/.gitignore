@@ -1,5 +1,3 @@
 /target/*
 .shuttle-storage
 Secrets*.toml
-
-aa.toml
