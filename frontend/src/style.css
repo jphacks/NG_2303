@@ -1,0 +1,197 @@
+*{margin:0}
+*{padding:0}
+.desktop {
+    background-color: #2a2d32;
+    height: 1024px;
+    overflow: hidden;
+    position: relative;
+    width: 1280px;
+  }
+  
+  .desktop .frame {
+    background-color: #24272c;
+    border-radius: 40px;
+    box-shadow: inset 18px 18px 36px #00000040, inset -18px -18px 36px #ffffff40;
+    height: 380px;
+    width: 800px;
+    position: absolute;
+    top: 200px;
+    left: 280px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 2列のグリッドを作成 */
+    grid-template-rows: repeat(2, 1fr);    /* 4行のグリッドを作成 */
+    gap: 0px;                             /* セル間のギャップ */
+    padding: 45px; 
+    justify-content: center;  /* 横方向の中央配置 */
+    align-items: center;      /* 縦方向の中央配置 */
+  }/*囲われたボックス部分*/
+  
+  .desktop .title {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    height: 126px;
+    justify-content: center;
+    left: 381px;
+    position: absolute;
+    top: 50px;
+    width: 679px;
+  }/*問題文部分*/
+  
+  .desktop .model-s {
+    color: white;
+    font-family: "Roboto-Bold", Helvetica;
+    font-size: 48px;
+    font-weight: 700;
+    letter-spacing: 0.37px;
+    line-height: 41px;
+    position: relative;
+    text-align: center;
+    white-space: nowrap;
+    width: fit-content;
+  }
+  
+  /* .desktop .div {
+    background-color: #d9d9d9;
+    height: 120px;
+    left: 1px;
+    position: absolute;
+    top: 0;
+    width: 1440px;
+  }*/
+  
+  .desktop .input-field-instance {
+    left: 713px !important;
+    position: absolute !important;
+    top: 730px !important;
+  }
+  
+.input-field-button{
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    margin: 0;
+    outline: none !important;
+  }
+
+  .input-field {
+    background-color: #2a2d32;
+    border-radius: 40px;
+    box-shadow: inset 8px 8px 16px #00000040, inset -8px -8px 16px #ffffff40;
+    height: 62px;
+    position: relative;
+    width: 320px;
+  }
+  
+  .input-field .text-wrapper {
+    color: #7f8493;
+    font-family: "Roboto-Bold", Helvetica;
+    font-size: 36px;
+    font-weight: 700;
+    height: 33px;
+    left: 85px;
+    letter-spacing: 0.38px;
+    line-height: 24px;
+    position: absolute;
+    text-align: center;
+    top: 20px;
+    width: 149px;
+  }
+  
+  .input-field:hover {
+    background: linear-gradient(180deg, rgb(47, 184.3, 255) 0%, rgb(157.72, 235.82, 217.07) 100%);
+  }
+  
+  .box {
+    height: 150px;
+    width: 150px;
+    position: relative;
+  }
+  
+  .box .rectangle {
+    background-color: #24272c;
+    border: 2px solid transparent; /* 枠線を透明に設定 */
+    border-radius: 24px;
+    box-shadow: inset 10px 10px 20px #00000040, inset -10px -10px 20px #ffffff40;
+    width: calc(100% - 4px); /* 枠線の幅を考慮 */
+    height: calc(100% - 4px); /* 枠線の幅を考慮 */
+    position: absolute;
+    color: #7f8493;
+    font-family: "Roboto-Bold", Helvetica;
+    font-size: 36px;
+    font-weight: 700;
+    line-height: 24px;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    top: 3px;
+    left: 30px;
+  }
+  
+  .box:hover .rectangle {
+    border: 2px solid rgb(47, 184, 255); /* ホバー時に枠線の色を変更 */
+  }
+  
+  
+  .rectangle-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    outline: none !important;
+    margin: 10px;
+  }
+  .rectangle-button .icon-check{
+    height: 45px;
+    width: 45px;
+    position: absolute;
+    top: -15px;
+    left: -15px;
+  }
+
+  .ling {
+    background: radial-gradient(50% 50% at 50% 50%, rgba(84, 86, 89, 0.5) 0%, rgba(35, 38, 41, 0.5) 100%);
+    background-color: rgba(255, 255, 255, 1);
+    border: 1.5px solid var(--Gradient-8, #2FB8FF);
+    background: radial-gradient(76.03% 76.03% at 24% 18%, rgba(84, 86, 89, 0.50) 0%, rgba(35, 38, 41, 0.50) 100%);
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+    border-radius: 40px;
+    height: 20px;
+    width: 20px;
+    position: absolute;
+    left: 93px;
+    top: 155px;
+    pointer-events: none;
+  }
+
+  /* .frame1 {
+    background: radial-gradient(50% 50% at 50% 50%, rgba(84, 86, 89, 0.5) 0%, rgba(35, 38, 41, 0.5) 100%);
+    background-color: rgba(255, 255, 255, 1);
+    border: 1.5px solid;
+    border-color: transparent;
+    border-radius: 40px;
+    height: 44px;
+    position: relative;
+    width: 44px;
+    background: none;
+    border: none;
+  }
+  
+  .frame1 .icon-check {
+    height: 0px;
+    left: 0px;
+    position: absolute;
+    top: 13px;
+    width: 22px;
+    background: none;
+    border: none;
+  }*/
