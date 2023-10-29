@@ -38,7 +38,7 @@ pub async fn object_detect(image_url: &str, api_key: &str) -> Result<LabelAndSco
                 "features": [
                     {
                         "type":"LABEL_DETECTION",
-                        "maxResults":10
+                        "maxResults":1
                     }
                 ]
             }

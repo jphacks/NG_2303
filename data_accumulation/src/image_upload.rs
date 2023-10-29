@@ -17,7 +17,7 @@ pub struct UploadImageData {
 }
 
 /// 使用する画像をこのサーバに送るための窓口
-/// 画像はbase64でエンコードされている．
+/// 本来はこのAPIにアップロードされた画像データをオブジェクトストレージに送る処理をするが，現在は見送り
 #[post("/image_upload")]
 async fn image_upload(
     request: web::Json<NoisedImage>,

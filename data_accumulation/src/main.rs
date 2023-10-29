@@ -55,7 +55,7 @@ async fn get_index() -> impl Responder {
 
 ///テスト用の関数です．特に意味はありません．
 #[get["/Una"]]
-async fn una(state: web::Data<AppState>) -> impl Responder {
+async fn una(state: web::Data<AppState>) -> Result<impl Responder> {
     // let noied_image = NoisedImage::new(
     //     "https://s3-ap-northeast-1.amazonaws.com/una-noised-images/una.jpg".to_string(),
     //     "una".to_string(),
@@ -73,8 +73,8 @@ async fn una(state: web::Data<AppState>) -> impl Responder {
     let a = crate::gcp::object_detect(&sercrt, image_path).await;
 
     match a {
-        Ok(_) => HttpResponse::Ok().body("ok"),
-        Err(e) => HttpResponse::BadRequest().body(format!("{}", e)),
+        Ok(_) => Ok(HttpResponse::Ok().body("ok")),
+        Err(e) => Ok(HttpResponse::BadRequest().body(format!("{}", e))),
     }
 }
 
@@ -110,7 +110,7 @@ async fn judge_captcha(
                 .insert(object_detected, &state.pool)
                 .await;
             match r {
-                Err(e) => log::error!("error: {}", e),
+                Err(e) => return Ok(HttpResponse::BadRequest().body(format!("{}", e))) ,
                 _ => {}
             }
         }
@@ -132,7 +132,7 @@ async fn judge_captcha(
 async fn get_captha_images(
     state: web::Data<AppState>,
     object_label: web::Path<String>,
-) -> impl Responder {
+) -> Result<impl Responder> {
     // let pool = pool.pool;
     // let object_label = object_label.clone();
     // HttpResponse::Ok().body(object_label)
@@ -143,7 +143,7 @@ async fn get_captha_images(
     // Okならデータを返す Errならbad requestを返す
     let data = match frontend_data {
         Ok(data) => data,
-        Err(e) => return HttpResponse::BadRequest().body(format!("{}", e)),
+        Err(e) => return Ok(HttpResponse::BadRequest().body(format!("{}", e))),
     };
     // 8個取り出す処理
     let mut rng = rand::thread_rng();
@@ -153,7 +153,7 @@ async fn get_captha_images(
         selected_data.push(data[index].clone());
     }
 
-    HttpResponse::Ok().json(selected_data)
+    Ok(HttpResponse::Ok().json(selected_data))
 }
 
 #[derive(Clone)]
