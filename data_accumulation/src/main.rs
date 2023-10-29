@@ -1,39 +1,23 @@
-use std::env;
-
-use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
+use actix_web::{get, post, web, HttpResponse, Responder};
 
 mod accumu;
 mod database;
-mod image_upload;
 mod gcp;
+mod image_upload;
 
 use accumu::NoisedImage;
 use shuttle_secrets::SecretStore;
 use sqlx::PgPool;
 
-use actix_web::middleware::Logger;
-use actix_web::{
-    error,
-    web::{Json, ServiceConfig},
-    Result,
-};
-use serde::{Deserialize, Serialize};
+use actix_web::web::ServiceConfig;
+
 use shuttle_actix_web::ShuttleActixWeb;
 use shuttle_runtime::CustomError;
-use sqlx::{Executor, FromRow};
+use sqlx::Executor;
 
 use anyhow::anyhow;
 
-// #[post["/postcards"]]
-// async fn judge_porker(request: web::Json<Request>) -> impl Responder {
-//     match porker::million_porker(&request.useCards, request.num) {
-//         Ok((role_count, sum_score, loop_num)) => {
-//             porker::debug_judge_role(&role_count, loop_num);
-//             HttpResponse::Ok().json(Response::new(sum_score, loop_num, role_count))
-//         }
-//         Err(e) => HttpResponse::BadRequest().body(format!("{}", e)),
-//     }
-// }
+use crate::accumu::BeJudgeImages;
 
 ///テスト用の関数です．特に意味はありません．helloを返します．
 #[get["/"]]
@@ -41,10 +25,9 @@ async fn get_index() -> impl Responder {
     HttpResponse::Ok().body("hello")
 }
 
-///テスト用の関数です．特に意味はありません．401コードを返します．
+///テスト用の関数です．特に意味はありません．
 #[get["/Una"]]
 async fn una(state: web::Data<AppState>) -> impl Responder {
-
     // let noied_image = NoisedImage::new(
     //     "https://s3-ap-northeast-1.amazonaws.com/una-noised-images/una.jpg".to_string(),
     //     "una".to_string(),
@@ -59,22 +42,21 @@ async fn una(state: web::Data<AppState>) -> impl Responder {
     let sercrt = state.secret.clone();
     let image_path = "gs://cloud-samples-data/vision/demo-img.jpg";
 
-    let a =  crate::gcp::ocject_detect(&sercrt, image_path).await;
+    let a = crate::gcp::ocject_detect(&sercrt, image_path).await;
 
-    match a    {
-        Ok(_) => return HttpResponse::Ok().body("ok"),
-        Err(e) => return HttpResponse::BadRequest().body(format!("{}", e)),
-        
+    match a {
+        Ok(_) => HttpResponse::Ok().body("ok"),
+        Err(e) => HttpResponse::BadRequest().body(format!("{}", e)),
     }
 }
 
 /// フロントから送られてきた，ユーザが選択した画像を物体検出に投げて，結果をDBに保存しフロントに返す．
 #[post["/judge-captcha"]]
-async fn judge_captcha(request: web::Json<Vec<NoisedImage>>) -> impl Responder {
+async fn judge_captcha(request: web::Json<BeJudgeImages>) -> impl Responder {
     // GCPかAWSに投げる
     let is_human = true;
 
-    for image_url in request.0.iter() {
+    for image_url in request.noized_images.iter() {
         println!("{}", image_url.image_url);
     }
 

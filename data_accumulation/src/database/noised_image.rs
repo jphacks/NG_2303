@@ -5,12 +5,10 @@ use crate::accumu::NoisedImage;
 use anyhow::Result;
 
 pub async fn select(object_label: &str, pool: &PgPool) -> Result<Vec<NoisedImage>> {
-    let data = sqlx::query_as(
-        "SELECT * FROM noised_images WHERE object_label = $1"
-    )
-    .bind(object_label)
-    .fetch_all(pool)
-    .await?;
+    let data = sqlx::query_as("SELECT * FROM noised_images WHERE object_label = $1")
+        .bind(object_label)
+        .fetch_all(pool)
+        .await?;
 
     // let mut data = Vec::new();
     // for row in rows {
@@ -37,7 +35,7 @@ pub async fn insert(data: NoisedImage, pool: &PgPool) -> Result<()> {
     sqlx::query(
         "INSERT INTO noised_images 
         (image_url, object_label, noise_info, forbidden_label)
-        VALUES ($1, $2, $3, $4)"
+        VALUES ($1, $2, $3, $4)",
     )
     .bind(data.image_url)
     .bind(data.object_label)

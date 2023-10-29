@@ -1,8 +1,11 @@
 use serde_json::json;
 
 // visionAPIにリクエストを投げて，物体検出する
-pub async fn ocject_detect(api_key: &str, image_path:&str ) -> anyhow::Result<()>{
-    let access_url = format!("https://vision.googleapis.com/v1/images:annotate?key={}", api_key);
+pub async fn ocject_detect(api_key: &str, image_path: &str) -> anyhow::Result<()> {
+    let access_url = format!(
+        "https://vision.googleapis.com/v1/images:annotate?key={}",
+        api_key
+    );
 
     let body = json!({
         "requests": [
@@ -23,7 +26,8 @@ pub async fn ocject_detect(api_key: &str, image_path:&str ) -> anyhow::Result<()
     });
 
     let client = reqwest::Client::new();
-    let res = client.post(&access_url)
+    let res = client
+        .post(&access_url)
         .header("Content-Type", "application/json")
         .json(&body)
         .send()

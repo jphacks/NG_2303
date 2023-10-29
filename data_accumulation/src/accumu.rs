@@ -1,13 +1,13 @@
 use anyhow::Result;
 use async_trait::async_trait;
 use serde::{Deserialize, Serialize};
-use sqlx::{Database, PgPool, FromRow};
+use sqlx::{FromRow, PgPool};
 
 /// フロント，バック間で送信，受信されるデータ型
-#[derive(Serialize, Deserialize, Debug,FromRow)]
-struct BeJudgeImages {
-    object_label: String, //be_judge_imagesに含まれる画像のラベル 1種類しかないはずなので，ここにも持ってきた
-    noized_images: Vec<NoisedImage>,
+#[derive(Serialize, Deserialize, Debug, FromRow)]
+pub struct BeJudgeImages {
+    pub object_label: String, //be_judge_imagesに含まれる画像のラベル 1種類しかないはずなので，ここにも持ってきた
+    pub noized_images: Vec<NoisedImage>,
 }
 impl BeJudgeImages {
     pub fn new(object_label: String, noized_images: Vec<NoisedImage>) -> Self {
