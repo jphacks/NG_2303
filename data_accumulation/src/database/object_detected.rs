@@ -51,6 +51,3 @@ pub async fn insert(data: ObjectDetectionData, pool: &PgPool) -> Result<()> {
     Ok(())
 }
 
-pub async fn delete(id: i64, pool: PgPool) -> Result<()> {
-    todo!()
-}

@@ -41,12 +41,19 @@ async fn get_index() -> impl Responder {
 ///テスト用の関数です．特に意味はありません．401コードを返します．
 #[get["/Una"]]
 async fn una() -> impl Responder {
-    let a = 1;
-    if a == 1 {
-        HttpResponse::Ok().body("hello")
-    } else {
-        HttpResponse::Unauthorized().body("401 Unauthrized")
-    }
+
+    let noied_image = NoisedImage::new(
+        "https://s3-ap-northeast-1.amazonaws.com/una-noised-images/una.jpg".to_string(),
+        "una".to_string(),
+        "noised".to_string(),
+        false,
+    );
+
+    let vec_i = vec![noied_image];
+
+    let json_string = serde_json::to_string(&vec_i).unwrap();
+
+    HttpResponse::Ok().body(json_string)
 }
 
 /// フロントから送られてきた，ユーザが選択した画像を物体検出に投げて，結果をDBに保存しフロントに返す．
@@ -71,7 +78,9 @@ async fn get_captha_images(
     object_label: web::Path<String>,
 ) -> impl Responder {
     // let pool = pool.pool;
-    // let object_label = *object_label;
+    // let object_label = object_label.clone();
+    // HttpResponse::Ok().body(object_label)
+
     let frontend_data = crate::database::noised_image::select(&object_label, &state.pool).await;
     // Okならデータを返す Errならbad requestを返す
     match frontend_data {
@@ -101,8 +110,9 @@ async fn actix_web(
                 .service(get_index)
                 .service(una)
                 .service(judge_captcha)
-                .service(judge_captcha)
+                // .service(judge_captcha)
                 .service(get_captha_images)
+                .service(image_upload::image_upload)
                 // .app_data(state.clone())
                 .app_data(state),
         );

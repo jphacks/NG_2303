@@ -1,8 +1,35 @@
-# POST https://jphacks.shuttleapp.rs HTTP/1.1
+POST https://jphacks.shuttleapp.rs/judge-captcha HTTP/1.1
+Content-Type: application/json
+
+
+[
+    {
+        "image_url": "testurl", 
+        "object_label": "cat",
+        "noise_info": "noiseeeee",
+        "forbidden_label": true
+    }
+]
+
+
+# GET https://jphacks.shuttleapp.rs/Una HTTP/1.1
+
+
+# POST https://jphacks.shuttleapp.rs/image_upload HTTP/1.1
 # Content-Type: application/json
 
 # {
-
+#     "image_url": "testurl", 
+#     "object_label": "cat",
+#     "noise_info": "noiseeeee",
+#     "forbidden_label": true
 # }
 
-GET https://jphacks.shuttleapp.rs/ HTTP/1.1
+# GET https://jphacks.shuttleapp.rs/get-capthcha-images/cat HTTP/1.1
+
+# {
+#     "image_url":"https",
+#     "object_label":"una",
+#     "noise_info":"noised",
+#     "forbidden_label":false
+# }

@@ -6,9 +6,7 @@ use anyhow::Result;
 
 pub async fn select(object_label: &str, pool: &PgPool) -> Result<Vec<NoisedImage>> {
     let data = sqlx::query_as(
-        r#"
-    SELECT * FROM noised_images WHERE object_label = ?
-    "#
+        "SELECT * FROM noised_images WHERE object_label = $1"
     )
     .bind(object_label)
     .fetch_all(pool)
@@ -36,21 +34,15 @@ pub async fn select(object_label: &str, pool: &PgPool) -> Result<Vec<NoisedImage
 }
 
 pub async fn insert(data: NoisedImage, pool: &PgPool) -> Result<()> {
-    let forbidden_label = match data.forbidden_label {
-        false => 0,
-        true => 1,
-    };
     sqlx::query(
-        r#"
-        INSERT INTO noised_images 
+        "INSERT INTO noised_images 
         (image_url, object_label, noise_info, forbidden_label)
-        VALUES ($1, $2, $3, $4)
-        "#
+        VALUES ($1, $2, $3, $4)"
     )
     .bind(data.image_url)
     .bind(data.object_label)
     .bind(data.noise_info)
-    .bind(forbidden_label)
+    .bind(data.forbidden_label)
     .execute(pool)
     .await?;
 
