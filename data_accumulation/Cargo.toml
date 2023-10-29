@@ -11,3 +11,20 @@ serde = "1.0.148"
 shuttle-shared-db = { version = "0.30.0", features = ["postgres"] }
 sqlx = { version = "0.7.1", features = ["runtime-tokio-native-tls", "postgres"] }
 tokio = "1.26.0"
+
+
+env_logger = "0.10.0"
+log = "0.4.17"
+
+serde_json = "1.0.93"
+rand = "*"
+dotenvy = "*"
+
+reqwest = { version = "0.11", features = ["json"] }
+
+anyhow = "1.0.70"
+async-trait = "*"
+aws-config = "*"
+aws-sdk-s3 = "*"
+aws-sdk-rekognition = "0.34.0"
+tracing = "0.1.37"

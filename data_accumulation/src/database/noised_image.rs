@@ -1,10 +1,10 @@
-use sqlx::SqlitePool;
+use sqlx::PgPool;
 
 use crate::accumu::NoisedImage;
 
 use anyhow::Result;
 
-pub async fn select(object_label: &str, pool: &SqlitePool) -> Result<Vec<NoisedImage>> {
+pub async fn select(object_label: &str, pool: &PgPool) -> Result<Vec<NoisedImage>> {
     let rows = sqlx::query!(
         r#"
     SELECT * FROM noised_images WHERE object_label = ?
@@ -35,7 +35,7 @@ pub async fn select(object_label: &str, pool: &SqlitePool) -> Result<Vec<NoisedI
     Ok(data)
 }
 
-pub async fn insert(data: NoisedImage, pool: &SqlitePool) -> Result<()> {
+pub async fn insert(data: NoisedImage, pool: &PgPool) -> Result<()> {
     let forbidden_label = match data.forbidden_label {
         false => 0,
         true => 1,

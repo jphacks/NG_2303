@@ -1,7 +1,7 @@
 use anyhow::Result;
 use async_trait::async_trait;
 use serde::{Deserialize, Serialize};
-use sqlx::{Database, SqlitePool};
+use sqlx::{Database, PgPool};
 
 /// フロント，バック間で送信，受信されるデータ型
 #[derive(Serialize, Deserialize, Debug)]
@@ -64,8 +64,8 @@ impl NoisedImage {
 // うまくいかないので設計書みたいに使われてるだけ
 #[async_trait]
 pub trait DataStore {
-    async fn select(&self, object_label: &str, pool: SqlitePool) -> Result<Vec<NoisedImage>>;
-    async fn insert(&self, data: NoisedImage, pool: SqlitePool) -> Result<()>;
+    async fn select(&self, object_label: &str, pool: PgPool) -> Result<Vec<NoisedImage>>;
+    async fn insert(&self, data: NoisedImage, pool: PgPool) -> Result<()>;
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -101,9 +101,9 @@ impl ObjectDetectionData {
 // うまくいかないので設計書みたいに使われてるだけ
 #[async_trait]
 pub(crate) trait DataAccumu {
-    async fn select(&self, id: i64, pool: SqlitePool) -> Result<ObjectDetectionData>;
-    async fn insert(&self, data: ObjectDetectionData, pool: SqlitePool) -> Result<()>;
-    async fn delete(&self, id: i64, pool: SqlitePool) -> Result<()>;
+    async fn select(&self, id: i64, pool: PgPool) -> Result<ObjectDetectionData>;
+    async fn insert(&self, data: ObjectDetectionData, pool: PgPool) -> Result<()>;
+    async fn delete(&self, id: i64, pool: PgPool) -> Result<()>;
 }
 
 // 少なくともこの2日の期間中は廃止するデータ型

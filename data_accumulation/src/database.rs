@@ -1,7 +1,7 @@
 use anyhow::Result;
 use sqlx::any::AnyRow;
 use sqlx::Database;
-use sqlx::SqlitePool;
+use sqlx::PgPool;
 
 use crate::accumu::DataAccumu;
 use crate::accumu::DataStore;
