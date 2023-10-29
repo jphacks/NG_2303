@@ -25,11 +25,11 @@ CREATE TABLE IF NOT EXISTS noised_images (
 
 -- noised_images
 INSERT INTO noised_images (image_url, object_label, noise_info, forbidden_label) VALUES
-    ('https://storage.googleapis.com/jphacks_ng2303/rabbit_mosaic1.png', 'rabit', 'noise_info', false),
-    ('https://storage.googleapis.com/jphacks_ng2303/Cropped_Image_34.png', 'rabit', 'noise_info', false),
-    ('https://storage.googleapis.com/jphacks_ng2303/Cropped_Image_35.png', 'rabit', 'noise_info', false),
-    ('https://storage.googleapis.com/jphacks_ng2303/Cropped_Image_36.png', 'rabit', 'noise_info', false),
-    ('https://storage.googleapis.com/jphacks_ng2303/Cropped_Image_37.png', 'rabit', 'noise_info', false),
-    ('https://storage.googleapis.com/jphacks_ng2303/Cropped_Image_39.png', 'rabit', 'noise_info', false),
-    ('https://storage.googleapis.com/jphacks_ng2303/Cropped_Image_40.png', 'rabit', 'noise_info', false),
-    ('https://storage.googleapis.com/jphacks_ng2303/Cropped_Image_41.png', 'rabit', 'noise_info', false);
+    ('https://storage.googleapis.com/jphacks_ng2303/rabbit_mosaic1.png', 'rabbit', 'noise_info', false),
+    ('https://storage.googleapis.com/jphacks_ng2303/Cropped_Image_34.png', 'rabbit', 'noise_info', false),
+    ('https://storage.googleapis.com/jphacks_ng2303/Cropped_Image_35.png', 'rabbit', 'noise_info', false),
+    ('https://storage.googleapis.com/jphacks_ng2303/Cropped_Image_36.png', 'rabbit', 'noise_info', false),
+    ('https://storage.googleapis.com/jphacks_ng2303/Cropped_Image_37.png', 'rabbit', 'noise_info', false),
+    ('https://storage.googleapis.com/jphacks_ng2303/Cropped_Image_39.png', 'rabbit', 'noise_info', false),
+    ('https://storage.googleapis.com/jphacks_ng2303/Cropped_Image_40.png', 'rabbit', 'noise_info', false),
+    ('https://storage.googleapis.com/jphacks_ng2303/Cropped_Image_41.png', 'rabbit', 'noise_info', false);
