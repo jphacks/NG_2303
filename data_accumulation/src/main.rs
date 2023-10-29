@@ -3,10 +3,8 @@ use std::env;
 use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
 
 mod accumu;
-mod aws_s3;
 mod database;
 mod image_upload;
-mod aws_s3_2;
 mod gcp;
 
 use accumu::NoisedImage;
@@ -58,17 +56,9 @@ async fn una() -> impl Responder {
 
     // let json_string = serde_json::to_string(&vec_i).unwrap();
 
-    let l = crate::aws_s3::detect_labels().await;
 
-    match l {
-        Ok(l) => {
-            let b = format!("{:?}", l);
-            HttpResponse::Ok().body(b)
-        },
-        Err(e) => {
-            HttpResponse::BadRequest().body(format!("{}", e))
-        },
-    }
+
+    HttpResponse::Unauthorized().body("una")
 }
 
 /// フロントから送られてきた，ユーザが選択した画像を物体検出に投げて，結果をDBに保存しフロントに返す．
@@ -122,11 +112,13 @@ async fn actix_web(
 
     // let a  = aws_config::;
     // let b = aws_sdk_s3::Client::new(&a);
-    // let secret = if let Some(secret) = secret_store.get("MY_API_KEY") {
-    //     secret
-    // } else {
-    //     return Err(anyhow!("secret was not found").into());
-    // };
+    let secret = if let Some(secret) = secret_store.get("GCP_API_KEY") {
+        secret
+    } else {
+        return Err(anyhow!("secret was not found").into());
+    };
+
+    
 
     let config = move |cfg: &mut ServiceConfig| {
         cfg.service(
