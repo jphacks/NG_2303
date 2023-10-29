@@ -1,7 +1,7 @@
 use anyhow::Result;
 use async_trait::async_trait;
 use serde::{Deserialize, Serialize};
-use sqlx::{Database, SqlitePool};
+use sqlx::{SqlitePool};
 
 /// フロント，バック間で送信，受信されるデータ型
 #[derive(Serialize, Deserialize, Debug)]
