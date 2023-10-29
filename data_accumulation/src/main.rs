@@ -43,7 +43,7 @@ async fn get_index() -> impl Responder {
 
 ///テスト用の関数です．特に意味はありません．401コードを返します．
 #[get["/Una"]]
-async fn una() -> impl Responder {
+async fn una(state: web::Data<AppState>) -> impl Responder {
 
     // let noied_image = NoisedImage::new(
     //     "https://s3-ap-northeast-1.amazonaws.com/una-noised-images/una.jpg".to_string(),
@@ -56,9 +56,16 @@ async fn una() -> impl Responder {
 
     // let json_string = serde_json::to_string(&vec_i).unwrap();
 
+    let sercrt = state.secret.clone();
+    let image_path = "gs://cloud-samples-data/vision/demo-img.jpg";
 
+    let a =  crate::gcp::ocject_detect(&sercrt, image_path).await;
 
-    HttpResponse::Unauthorized().body("una")
+    match a    {
+        Ok(_) => return HttpResponse::Ok().body("ok"),
+        Err(e) => return HttpResponse::BadRequest().body(format!("{}", e)),
+        
+    }
 }
 
 /// フロントから送られてきた，ユーザが選択した画像を物体検出に投げて，結果をDBに保存しフロントに返す．
@@ -97,6 +104,7 @@ async fn get_captha_images(
 #[derive(Clone)]
 struct AppState {
     pool: PgPool,
+    secret: String,
 }
 
 #[shuttle_runtime::main]
@@ -108,8 +116,6 @@ async fn actix_web(
         .await
         .map_err(CustomError::new)?;
 
-    let state = web::Data::new(AppState { pool });
-
     // let a  = aws_config::;
     // let b = aws_sdk_s3::Client::new(&a);
     let secret = if let Some(secret) = secret_store.get("GCP_API_KEY") {
@@ -118,7 +124,7 @@ async fn actix_web(
         return Err(anyhow!("secret was not found").into());
     };
 
-    
+    let state = web::Data::new(AppState { pool, secret });
 
     let config = move |cfg: &mut ServiceConfig| {
         cfg.service(
