@@ -1,3 +1,7 @@
+DROP TABLE IF EXISTS object_detection_data;
+DROP TABLE IF EXISTS noised_images;
+
+
 CREATE TABLE IF NOT EXISTS object_detection_data (
     id     INTEGER    PRIMARY KEY     NOT NULL,
     image_url    TEXT          NOT NULL,

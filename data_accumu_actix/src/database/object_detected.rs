@@ -52,6 +52,3 @@ pub async fn insert(data: ObjectDetectionData, pool: &SqlitePool) -> Result<()> 
     Ok(())
 }
 
-pub async fn delete(id: i64, pool: SqlitePool) -> Result<()> {
-    todo!()
-}

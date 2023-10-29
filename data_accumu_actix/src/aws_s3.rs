@@ -1,115 +1,72 @@
-use std::{
-    env,
-    fs::File,
-    io::Write,
-    path::{Path, PathBuf},
-    time::Duration,
-};
+extern crate rusoto_core;
+extern crate rusoto_rekognition;
+extern crate tokio;
 
-use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
+use rusoto_core::Region;
+use rusoto_rekognition::{DetectLabelsRequest, Image, Rekognition, RekognitionClient, S3Object};
 use anyhow::Result;
-use aws_config::meta::region::RegionProviderChain;
-use aws_sdk_s3::types::{
-    BucketLocationConstraint, CreateBucketConfiguration, Delete, ObjectIdentifier,
-};
-use aws_sdk_s3::{error::SdkError, primitives::ByteStream, Client};
-use aws_sdk_s3::{
-    operation::{
-        copy_object::{CopyObjectError, CopyObjectOutput},
-        create_bucket::{CreateBucketError, CreateBucketOutput},
-        get_object::{GetObjectError, GetObjectOutput},
-        list_objects_v2::ListObjectsV2Output,
-        put_object::{PutObjectError, PutObjectOutput},
-    },
-    presigning::PresigningConfig,
-};
-use serde::{Deserialize, Serialize};
-use tracing::log::trace;
 
-#[derive(Debug)]
-struct Opt {
-    bucket: String,
-    object: String,
-    destination: PathBuf,
-}
-
-pub async fn upload_object(
-    client: &Client,
-    bucket_name: &str,
-    file_name: &str,
-    key: &str,
-) -> Result<PutObjectOutput, SdkError<PutObjectError>> {
-    let body = ByteStream::from_path(Path::new(file_name)).await;
-    client
-        .put_object()
-        .bucket(bucket_name)
-        .key(key)
-        .body(body.unwrap())
-        .send()
-        .await
-}
-
-// // snippet-start:[s3.rust.get_object]
-// /// S3ストレージからオブジェクトを取得し，base64文字列にエンコードされた画像を返す
-// async fn get_object(client: Client, opt: Opt) -> Result<usize, anyhow::Error> {
-//     trace!("bucket:      {}", opt.bucket);
-//     trace!("object:      {}", opt.object);
-//     trace!("destination: {}", opt.destination.display());
-
-//     let mut file = File::create(opt.destination.clone())?;
-
-//     let mut object = client
-//         .get_object()
-//         .bucket(opt.bucket)
-//         .key(opt.object)
-//         .send()
-//         .await?;
-
-//     // let mut byte_count = 0_usize;
-//     // while let Some(bytes) = object.body.try_next().await? {
-//     //     let bytes = file.write(&bytes)?;
-//     //     byte_count += bytes;
-//     //     trace!("Intermediate write of {bytes}");
-//     // }
-
-//     Ok(byte_count)
-// }
-// snippet-end:[s3.rust.get_object]
-
-pub async fn list_objects(client: &Client, bucket_name: &str) -> Result<()> {
-    let objects = client.list_objects_v2().bucket(bucket_name).send().await?;
-    println!("Objects in bucket:");
-    for obj in objects.contents().unwrap_or_default() {
-        println!("{:?}", obj.key().unwrap());
+fn get_highest_confidence_label(labels: &[rusoto_rekognition::Label]) -> Option<&rusoto_rekognition::Label> {
+    // ラベルリストが空の場合はNoneを返す
+    if labels.is_empty() {
+        return None;
     }
 
-    Ok(())
+    // 最初のラベルを初期最高信頼度ラベルとして設定
+    let mut highest_confidence_label = &labels[0];
+
+    // ラベルリストを走査して最高信頼度のラベルを見つける
+    for label in labels.iter().skip(1) {
+        if let Some(confidence) = label.confidence {
+            if confidence > highest_confidence_label.confidence.unwrap_or(0.0) {
+                highest_confidence_label = label;
+            }
+        }
+    }
+
+    // 最高信頼度のラベルを返す
+    Some(highest_confidence_label)
 }
-async fn get_object(client: &Client, bucket: &str, object: &str, expires_in: u64) -> Result<()> {
-    let expires_in = Duration::from_secs(expires_in);
-    let presigned_request = client
-        .get_object()
-        .bucket(bucket)
-        .key(object)
-        .presigned(PresigningConfig::expires_in(expires_in)?)
-        .await?;
 
-    println!("Object URI: {}", presigned_request.uri());
 
-    Ok(())
-}
+async fn detect_labels() -> Result<()> {
+    // AWSリージョン
+    let region = Region::ApNortheast1; // "ap-northeast-1"に対応するリージョン
 
-async fn put_object(client: &Client, bucket: &str, object: &str, expires_in: u64) -> Result<()> {
-    let expires_in = Duration::from_secs(expires_in);
+    // AWS認証設定
+    let rekognition_client = RekognitionClient::new(region);
 
-    let presigned_request = client
-        .put_object()
-        .bucket(bucket)
-        .key(object)
-        .presigned(PresigningConfig::expires_in(expires_in)?)
-        .await?;
+    // S3オブジェクトの設定
+    let s3_object = S3Object {
+        bucket: Some("jphacks".to_string()),
+        name: Some("dog_ai1.png".to_string()),
+        version: None,
+    };
 
-    println!("Object URI: {}", presigned_request.uri());
+    // 画像解析の設定
+    let rekognition_image = Image {
+        s3_object: Some(s3_object),
+        ..Default::default()
+    };
+
+    // 画像解析リクエストの設定
+    let request = DetectLabelsRequest {
+        image: rekognition_image,
+        max_labels: Some(10),    // 何個までラベルを取得するかの設定
+        min_confidence: Some(85.0),  // 信頼度の閾値
+        ..Default::default()
+    };
+
+    // 画像解析の実行
+    let response = rekognition_client.detect_labels(request).await?;
+    
+    // 結果の表示
+    if let Some(highest_confidence_label) = get_highest_confidence_label(response.labels.as_deref().unwrap_or(&[])) {
+        // println!("最も信頼度が高いラベル: {}, 信頼度: {}%", highest_confidence_label.name.as_ref().unwrap(), highest_confidence_label.confidence.unwrap());
+        println!("name: {}", highest_confidence_label.name.as_ref().unwrap())
+    } else {
+        println!("ラベルがありません。");
+    }
 
     Ok(())
 }
