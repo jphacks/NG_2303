@@ -34,8 +34,9 @@
 #     "forbidden_label":false
 # }
 
-POST https://vision.googleapis.com/v1/images:annotate
+POST https://vision.googleapis.com/v1/images:annotate?key='APIkey
 Content-Type: application/json
+
 
 {
   "requests":[
