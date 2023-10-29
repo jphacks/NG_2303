@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 use sqlx::{FromRow, PgPool};
 
 /// フロント，バック間で送信，受信されるデータ型
-#[derive(Serialize, Deserialize, Debug, FromRow)]
+#[derive(Serialize, Deserialize, Debug, FromRow, Clone)]
 pub struct BeJudgeImages {
     pub object_label: String, //be_judge_imagesに含まれる画像のラベル 1種類しかないはずなので，ここにも持ってきた
     pub noized_images: Vec<NoisedImage>,
@@ -27,7 +27,7 @@ impl BeJudgeImages {
 
 /// 画像1つあたりのデータ型
 /// DBにもこの型で保存する
-#[derive(Serialize, Deserialize, Debug, FromRow)]
+#[derive(Serialize, Deserialize, Debug, FromRow, Clone)]
 pub struct NoisedImage {
     pub image_url: String, // Amazon S3からのURL
     //image_base64: String,になる可能性もある

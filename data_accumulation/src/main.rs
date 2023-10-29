@@ -5,6 +5,7 @@ mod database;
 mod gcp;
 mod image_upload;
 
+use rand::Rng;
 use serde::{Deserialize, Serialize};
 use shuttle_secrets::SecretStore;
 use sqlx::PgPool;
@@ -140,10 +141,19 @@ async fn get_captha_images(
         .select(&object_label, &state.pool)
         .await;
     // Okならデータを返す Errならbad requestを返す
-    match frontend_data {
-        Ok(data) => HttpResponse::Ok().json(data),
-        Err(e) => HttpResponse::BadRequest().body(format!("{}", e)),
+    let data = match frontend_data {
+        Ok(data) => data,
+        Err(e) => return HttpResponse::BadRequest().body(format!("{}", e)),
+    };
+    // 8個取り出す処理
+    let mut rng = rand::thread_rng();
+    let mut selected_data = Vec::new();
+    for _ in 0..8 {
+        let index = rng.gen_range(0..data.len());
+        selected_data.push(data[index].clone());
     }
+
+    HttpResponse::Ok().json(selected_data)
 }
 
 #[derive(Clone)]
