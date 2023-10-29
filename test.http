@@ -12,7 +12,7 @@
 # ]
 
 
-GET https://jphacks.shuttleapp.rs/Una HTTP/1.1
+# GET https://jphacks.shuttleapp.rs/Una HTTP/1.1
 
 
 # POST https://jphacks.shuttleapp.rs/image_upload HTTP/1.1
@@ -34,22 +34,44 @@ GET https://jphacks.shuttleapp.rs/Una HTTP/1.1
 #     "forbidden_label":false
 # }
 
-# POST https://vision.googleapis.com/v1/images:annotate?key='APIkey
-# Content-Type: application/json
+POST https://vision.googleapis.com/v1/images:annotate?key=
+Content-Type: application/json
 
 
+{
+  "requests":[
+    {
+      "image":{
+"source": {
+          "imageUri": "gs://cloud-samples-data/vision/demo-img.jpg"
+}
+      },
+      "features":[
+        {
+          "type":"LABEL_DETECTION",
+          "maxResults":2
+        }
+      ]
+    }
+  ]
+}
+
+# 返ってくるデータ
 # {
-#   "requests":[
+#   "responses": [
 #     {
-#       "image":{
-# "source": {
-#           "imageUri": "gs://cloud-samples-data/vision/demo-img.jpg"
-# }
-#       },
-#       "features":[
+#       "labelAnnotations": [
 #         {
-#           "type":"LABEL_DETECTION",
-#           "maxResults":1
+#           "mid": "/m/0199g",
+#           "description": "Bicycle",
+#           "score": 0.98430496,
+#           "topicality": 0.98430496
+#         },
+#         {
+#           "mid": "/m/083wq",
+#           "description": "Wheel",
+#           "score": 0.976651,
+#           "topicality": 0.976651
 #         }
 #       ]
 #     }
