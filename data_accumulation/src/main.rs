@@ -164,26 +164,31 @@ struct AppState {
 
 #[shuttle_runtime::main]
 async fn actix_web(
-    #[shuttle_shared_db::Postgres] pool: PgPool,
+    // #[shuttle_shared_db::Postgres] pool: PgPool,
     #[shuttle_secrets::Secrets] secret_store: SecretStore,
 ) -> ShuttleActixWeb<impl FnOnce(&mut ServiceConfig) + Send + Clone + 'static> {
-    pool.execute(include_str!("../schema.sql"))
-        .await
-        .map_err(CustomError::new)?;
-
-    // let a  = aws_config::;
-    // let b = aws_sdk_s3::Client::new(&a);
     let secret = if let Some(secret) = secret_store.get("GCP_API_KEY") {
         secret
     } else {
         return Err(anyhow!("secret was not found").into());
     };
 
+    let database_url = if let Some(secret) = secret_store.get("DATABASE_URL") {
+        secret
+    } else {
+        return Err(anyhow!("secret was not found").into());
+    };
+
     // URLからDBの接続情報を取得
-    
+    // デプロイ時はShuttleのマクロが自動で行うので，ローカル実行時のみ
+    // 不要な方はコメントアウトする
     let pool = PgPool::connect(&database_url).await.unwrap();
+    pool.execute(include_str!("../schema.sql"))
+    .await
+    .map_err(CustomError::new)?;
 
     let state = web::Data::new(AppState { pool, secret });
+
 
     let config = move |cfg: &mut ServiceConfig| {
         cfg.service(

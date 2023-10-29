@@ -25,8 +25,9 @@
 #     "forbidden_label": true
 # }
 
-GET https://jphacks.shuttleapp.rs/get-capthcha-images/rabbit HTTP/1.1
+# GET https://jphacks.shuttleapp.rs/get-capthcha-images/rabbit HTTP/1.1
 
+GET http://127.0.0.1:8000/get-capthcha-images/rabbit HTTP/1.1
 # {
 #     "image_url":"https",
 #     "object_label":"una",
