@@ -12,11 +12,11 @@
     background-color: #24272c;
     border-radius: 40px;
     box-shadow: inset 18px 18px 36px #00000040, inset -18px -18px 36px #ffffff40;
-    height: 358px;
-    left: 350px;
+    height: 380px;
+    width: 800px;
     position: absolute;
-    top: 220px;
-    width: 625px;
+    top: 200px;
+    left: 280px;
     display: grid;
     grid-template-columns: repeat(4, 1fr); /* 2列のグリッドを作成 */
     grid-template-rows: repeat(2, 1fr);    /* 4行のグリッドを作成 */
@@ -35,7 +35,7 @@
     justify-content: center;
     left: 381px;
     position: absolute;
-    top: 60px;
+    top: 50px;
     width: 679px;
   }/*問題文部分*/
   
@@ -105,8 +105,8 @@
   }
   
   .box {
-    height: 100px;
-    width: 100px;
+    height: 150px;
+    width: 150px;
     position: relative;
   }
   
@@ -148,13 +148,14 @@
     justify-content: center;
     align-items: center;
     outline: none !important;
+    margin: 10px;
   }
   .rectangle-button .icon-check{
-    height: 40px;
-    width: 40px;
+    height: 45px;
+    width: 45px;
     position: absolute;
-    top: -10px;
-    left: -10px;
+    top: -15px;
+    left: -15px;
   }
 
   .ling {
@@ -167,8 +168,8 @@
     height: 20px;
     width: 20px;
     position: absolute;
-    left: 68px;
-    top: 110px;
+    left: 93px;
+    top: 155px;
     pointer-events: none;
   }
 
