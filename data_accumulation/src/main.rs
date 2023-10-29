@@ -179,6 +179,10 @@ async fn actix_web(
         return Err(anyhow!("secret was not found").into());
     };
 
+    // URLからDBの接続情報を取得
+    
+    let pool = PgPool::connect(&database_url).await.unwrap();
+
     let state = web::Data::new(AppState { pool, secret });
 
     let config = move |cfg: &mut ServiceConfig| {

@@ -1,24 +1,7 @@
 use crate::LabelAndScore;
 use anyhow::Result;
-use serde_json::json;
+use serde_json::{json, Value};
 
-#[derive(Debug, serde::Deserialize)]
-struct LabelAnnotation {
-    mid: String,
-    description: String,
-    score: f64,
-    topicality: f64,
-}
-
-#[derive(Debug, serde::Deserialize)]
-struct Response {
-    label_annotations: Vec<LabelAnnotation>,
-}
-
-#[derive(Debug, serde::Deserialize)]
-struct ApiResponse {
-    responses: Vec<Response>,
-}
 
 /// visionAPIにリクエストを投げて，物体検出する 結果はラベルとスコアの組で返す
 pub async fn object_detect(image_url: &str, api_key: &str) -> Result<LabelAndScore> {
@@ -55,12 +38,16 @@ pub async fn object_detect(image_url: &str, api_key: &str) -> Result<LabelAndSco
 
     log::info!("res: {:?}", res);
 
-    let json: ApiResponse = res.json().await?;
+    // 構造を定義するのが大変なので，Value型を使う
+    let value :Value = res.json().await?;
+
+    let label = value[0]["labelAnnotations"][0]["description"].to_string();
+    let score = value[0]["labelAnnotations"][0]["score"].to_string().parse()?;
 
     let label_and_score = LabelAndScore::new(
         image_url.to_string(),
-        json.responses[0].label_annotations[0].description.clone(),
-        json.responses[0].label_annotations[0].score as f64,
+        label,
+        score
     );
 
     Ok(label_and_score)

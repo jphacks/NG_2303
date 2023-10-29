@@ -12,7 +12,7 @@
 # ]
 
 
-GET https://jphacks.shuttleapp.rs/Una HTTP/1.1
+# GET https://jphacks.shuttleapp.rs/Una HTTP/1.1
 
 
 # POST https://jphacks.shuttleapp.rs/image_upload HTTP/1.1
@@ -25,7 +25,7 @@ GET https://jphacks.shuttleapp.rs/Una HTTP/1.1
 #     "forbidden_label": true
 # }
 
-# GET https://jphacks.shuttleapp.rs/get-capthcha-images/rabbit HTTP/1.1
+GET https://jphacks.shuttleapp.rs/get-capthcha-images/rabbit HTTP/1.1
 
 # {
 #     "image_url":"https",
