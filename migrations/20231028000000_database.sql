@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS object_detection_data (
     noise_info     TEXT                NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS noized_images (
+CREATE TABLE IF NOT EXISTS noised_images (
     id     INTEGER    PRIMARY KEY     NOT NULL,
     image_url    TEXT          NOT NULL,
     object_label    TEXT          NOT NULL,

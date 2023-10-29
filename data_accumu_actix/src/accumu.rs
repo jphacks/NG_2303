@@ -7,10 +7,10 @@ use sqlx::{Database, SqlitePool};
 #[derive(Serialize, Deserialize, Debug)]
 struct BeJudgeImages {
     object_label: String, //be_judge_imagesに含まれる画像のラベル 1種類しかないはずなので，ここにも持ってきた
-    noized_images: Vec<NoizedImage>,
+    noized_images: Vec<NoisedImage>,
 }
 impl BeJudgeImages {
-    pub fn new(object_label: String, noized_images: Vec<NoizedImage>) -> Self {
+    pub fn new(object_label: String, noized_images: Vec<NoisedImage>) -> Self {
         Self {
             object_label,
             noized_images,
@@ -20,7 +20,7 @@ impl BeJudgeImages {
     pub fn new_dammy() -> Self {
         Self {
             object_label: "".to_string(),
-            noized_images: vec![NoizedImage::new_dammy()],
+            noized_images: vec![NoisedImage::new_dammy()],
         }
     }
 }
@@ -28,25 +28,25 @@ impl BeJudgeImages {
 /// 画像1つあたりのデータ型
 /// DBにもこの型で保存する
 #[derive(Serialize, Deserialize, Debug)]
-pub struct NoizedImage {
-    image_url: String, // Amazon S3からのURL
+pub struct NoisedImage {
+    pub image_url: String, // Amazon S3からのURL
     //image_base64: String,になる可能性もある
-    object_label: String,
-    noize_info: String,    //どのような構造の情報が入るのか決定できないためString
-    forbidden_label: bool, // ユーザが選択した場合，botの可能性を疑うことを示すラベル
+    pub object_label: String,
+    pub noise_info: String,    //どのような構造の情報が入るのか決定できないためString
+    pub forbidden_label: bool, // ユーザが選択した場合，botの可能性を疑うことを示すラベル
 }
 
-impl NoizedImage {
+impl NoisedImage {
     pub fn new(
         image_url: String,
         object_label: String,
-        noize_info: String,
+        noise_info: String,
         forbidden_label: bool,
     ) -> Self {
         Self {
             image_url,
             object_label,
-            noize_info,
+            noise_info,
             forbidden_label,
         }
     }
@@ -55,7 +55,7 @@ impl NoizedImage {
         Self {
             image_url: "".to_string(),
             object_label: "".to_string(),
-            noize_info: "".to_string(),
+            noise_info: "".to_string(),
             forbidden_label: false,
         }
     }
@@ -63,9 +63,8 @@ impl NoizedImage {
 
 #[async_trait]
 pub(crate) trait DataStore {
-    async fn select(&self, object_label: &str, pool: SqlitePool) -> Result<ObjectDetectionData>;
-    async fn insert(&self, data: NoizedImage, pool: SqlitePool) -> Result<()>;
-    async fn delete(&self, id: i64, pool: SqlitePool) -> Result<()>;
+    async fn select(&self, object_label: &str, pool: SqlitePool) -> Result<Vec<NoisedImage>>;
+    async fn insert(&self, data: NoisedImage, pool: SqlitePool) -> Result<()>;
 }
 
 #[derive(Serialize, Deserialize, Debug)]
