@@ -5,7 +5,6 @@ mod database;
 mod gcp;
 mod image_upload;
 
-use rand::Rng;
 use serde::{Deserialize, Serialize};
 use shuttle_secrets::SecretStore;
 use sqlx::PgPool;
@@ -110,7 +109,7 @@ async fn judge_captcha(
                 .insert(object_detected, &state.pool)
                 .await;
             match r {
-                Err(e) => return Ok(HttpResponse::BadRequest().body(format!("{}", e))) ,
+                Err(e) => return Ok(HttpResponse::BadRequest().body(format!("{}", e))),
                 _ => {}
             }
         }
@@ -145,7 +144,7 @@ async fn get_captha_images(
         Ok(data) => data,
         Err(e) => return Ok(HttpResponse::BadRequest().body(format!("{}", e))),
     };
-    
+
     // rngがエラーを吐くので，一旦廃止
     // // 8個取り出す処理
     // let mut rng = rand::thread_rng();
@@ -186,11 +185,10 @@ async fn actix_web(
     // 不要な方はコメントアウトする
     let pool = PgPool::connect(&database_url).await.unwrap();
     pool.execute(include_str!("../schema.sql"))
-    .await
-    .map_err(CustomError::new)?;
+        .await
+        .map_err(CustomError::new)?;
 
     let state = web::Data::new(AppState { pool, secret });
-
 
     let config = move |cfg: &mut ServiceConfig| {
         cfg.service(
