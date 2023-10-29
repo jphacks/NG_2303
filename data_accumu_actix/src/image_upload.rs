@@ -42,7 +42,8 @@ pub struct UploadImageData {
 /// 画像はbase64でエンコードされている．
 #[post("/image_upload")]
 async fn image_upload(request: web::Json<NoisedImage>) -> impl Responder {
-    // 受け取ったノイズ加工済みデータをAmazon S3に保存する
+    // 受け取ったのをDBに保存
+    
 
     HttpResponse::Ok().body("hello")
 }

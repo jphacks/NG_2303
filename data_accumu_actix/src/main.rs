@@ -8,7 +8,7 @@ mod database;
 mod image_upload;
 
 use accumu::NoisedImage;
-use sqlx::SqlitePool;
+use sqlx::{Sqlite, SqlitePool};
 
 // #[post["/postcards"]]
 // async fn judge_porker(request: web::Json<Request>) -> impl Responder {
@@ -58,12 +58,25 @@ async fn judge_captcha(_request: web::Json<NoisedImage>) -> impl Responder {
 /// フロントに表示するノイズかけた画像を送る
 /// 画像はbase64でエンコードされている．
 /// ラベル，
-#[get["/get-capthcha-images"]]
-async fn get_captha_images() -> impl Responder {
-    let frontend_data = NoisedImage::new_dammy();
-    HttpResponse::Ok().json(frontend_data)
+#[get["/get-capthcha-images/{object_label}"]]
+async fn get_captha_images(
+    state: web::Data<AppState>,
+    object_label: web::Path<String>,
+) -> impl Responder {
+    // let pool = pool.pool;
+    // let object_label = *object_label;
+    let frontend_data = crate::database::noised_image::select(&object_label, &state.pool).await;
+    // Okならデータを返す Errならbad requestを返す
+    match frontend_data {
+        Ok(data) => HttpResponse::Ok().json(data),
+        Err(e) => HttpResponse::BadRequest().body(format!("{}", e)),
+    }
 }
 
+#[derive(Clone)]
+struct AppState {
+    pool: SqlitePool,
+}
 ///エントリーポイントです．
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -74,7 +87,7 @@ async fn main() -> std::io::Result<()> {
         .await
         .unwrap();
 
-    let state = web::Data::new(pool);
+    let state = web::Data::new(AppState { pool });
 
     HttpServer::new(move || {
         App::new()
@@ -82,6 +95,7 @@ async fn main() -> std::io::Result<()> {
             .service(una)
             .service(judge_captcha)
             .service(judge_captcha)
+            .service(get_captha_images)
             .app_data(state.clone())
     })
     .bind(("127.0.0.1", 5001))?

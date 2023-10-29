@@ -32,7 +32,7 @@ pub struct NoisedImage {
     pub image_url: String, // Amazon S3からのURL
     //image_base64: String,になる可能性もある
     pub object_label: String,
-    pub noise_info: String,    //どのような構造の情報が入るのか決定できないためString
+    pub noise_info: String, //どのような構造の情報が入るのか決定できないためString
     pub forbidden_label: bool, // ユーザが選択した場合，botの可能性を疑うことを示すラベル
 }
 
@@ -61,8 +61,9 @@ impl NoisedImage {
     }
 }
 
+// うまくいかないので設計書みたいに使われてるだけ
 #[async_trait]
-pub(crate) trait DataStore {
+pub trait DataStore {
     async fn select(&self, object_label: &str, pool: SqlitePool) -> Result<Vec<NoisedImage>>;
     async fn insert(&self, data: NoisedImage, pool: SqlitePool) -> Result<()>;
 }
@@ -97,7 +98,7 @@ impl ObjectDetectionData {
     }
 }
 
-/// DIのためのtrait
+// うまくいかないので設計書みたいに使われてるだけ
 #[async_trait]
 pub(crate) trait DataAccumu {
     async fn select(&self, id: i64, pool: SqlitePool) -> Result<ObjectDetectionData>;
