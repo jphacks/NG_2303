@@ -7,6 +7,7 @@ mod aws_s3;
 mod database;
 mod image_upload;
 mod aws_s3_2;
+mod gcp;
 
 use accumu::NoisedImage;
 use shuttle_secrets::SecretStore;
@@ -119,13 +120,13 @@ async fn actix_web(
 
     let state = web::Data::new(AppState { pool });
 
-    let a  = aws_config::;
-    let b = aws_sdk_s3::Client::new(&a);
-    let secret = if let Some(secret) = secret_store.get("MY_API_KEY") {
-        secret
-    } else {
-        return Err(anyhow!("secret was not found").into());
-    };
+    // let a  = aws_config::;
+    // let b = aws_sdk_s3::Client::new(&a);
+    // let secret = if let Some(secret) = secret_store.get("MY_API_KEY") {
+    //     secret
+    // } else {
+    //     return Err(anyhow!("secret was not found").into());
+    // };
 
     let config = move |cfg: &mut ServiceConfig| {
         cfg.service(
