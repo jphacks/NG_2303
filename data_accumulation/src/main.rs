@@ -145,15 +145,17 @@ async fn get_captha_images(
         Ok(data) => data,
         Err(e) => return Ok(HttpResponse::BadRequest().body(format!("{}", e))),
     };
-    // 8個取り出す処理
-    let mut rng = rand::thread_rng();
-    let mut selected_data = Vec::new();
-    for _ in 0..8 {
-        let index = rng.gen_range(0..data.len());
-        selected_data.push(data[index].clone());
-    }
+    
+    // rngがエラーを吐くので，一旦廃止
+    // // 8個取り出す処理
+    // let mut rng = rand::thread_rng();
+    // let mut selected_data = Vec::new();
+    // for _ in 0..8 {
+    //     let index = rng.gen_range(0..data.len());
+    //     selected_data.push(data[index].clone());
+    // }
 
-    Ok(HttpResponse::Ok().json(selected_data))
+    Ok(HttpResponse::Ok().json(data))
 }
 
 #[derive(Clone)]
