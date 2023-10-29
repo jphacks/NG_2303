@@ -26,7 +26,7 @@ use aws_sdk_s3::{
 use serde::{Deserialize, Serialize};
 use tracing::log::trace;
 
-use crate::accumu::NoisedImage;
+use crate::{accumu::NoisedImage, AppState};
 
 /// アップロードする画像を含め必要なデータ
 /// 画像はbase64でエンコードされている．
@@ -41,9 +41,12 @@ pub struct UploadImageData {
 /// 使用する画像をこのサーバに送るための窓口
 /// 画像はbase64でエンコードされている．
 #[post("/image_upload")]
-async fn image_upload(request: web::Json<NoisedImage>) -> impl Responder {
+async fn image_upload(request: web::Json<NoisedImage>,  state: web::Data<AppState>,) -> impl Responder {
     // 受け取ったのをDBに保存
-    
+    let result =  crate::database::noised_image::insert(request.into_inner(), &state.pool).await;
 
-    HttpResponse::Ok().body("hello")
+    match result {
+        Ok(_) => HttpResponse::Ok().body("ok"),
+        Err(e) => HttpResponse::BadRequest().body(format!("{}", e)),
+    }
 }

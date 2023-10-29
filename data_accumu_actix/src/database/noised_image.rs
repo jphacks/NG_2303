@@ -35,7 +35,7 @@ pub async fn select(object_label: &str, pool: &SqlitePool) -> Result<Vec<NoisedI
     Ok(data)
 }
 
-async fn insert(data: NoisedImage, pool: &SqlitePool) -> Result<()> {
+pub async fn insert(data: NoisedImage, pool: &SqlitePool) -> Result<()> {
     let forbidden_label = match data.forbidden_label {
         false => 0,
         true => 1,
