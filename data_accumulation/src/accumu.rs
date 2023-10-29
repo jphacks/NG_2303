@@ -63,9 +63,9 @@ impl NoisedImage {
 
 // うまくいかないので設計書みたいに使われてるだけ
 #[async_trait]
-pub trait DataStore {
-    async fn select(&self, object_label: &str, pool: PgPool) -> Result<Vec<NoisedImage>>;
-    async fn insert(&self, data: NoisedImage, pool: PgPool) -> Result<()>;
+pub trait NoisedImageStore {
+    async fn select(&self, object_label: &str, pool: &PgPool) -> Result<Vec<NoisedImage>>;
+    async fn insert(&self, data: NoisedImage, pool: &PgPool) -> Result<()>;
 }
 
 #[derive(Serialize, Deserialize, Debug, FromRow)]
@@ -100,10 +100,10 @@ impl ObjectDetectionData {
 
 // うまくいかないので設計書みたいに使われてるだけ
 #[async_trait]
-pub(crate) trait DataAccumu {
-    async fn select(&self, id: i64, pool: PgPool) -> Result<ObjectDetectionData>;
-    async fn insert(&self, data: ObjectDetectionData, pool: PgPool) -> Result<()>;
-    async fn delete(&self, id: i64, pool: PgPool) -> Result<()>;
+pub trait ObjectDetectionDataStore {
+    async fn select(&self, id: i64, pool: &PgPool) -> Result<ObjectDetectionData>;
+    async fn insert(&self, data: ObjectDetectionData, pool: &PgPool) -> Result<()>;
+    // async fn delete(&self, id: i64, pool: &PgPool) -> Result<()>;
 }
 
 // 少なくともこの2日の期間中は廃止するデータ型

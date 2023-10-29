@@ -18,6 +18,9 @@ use sqlx::Executor;
 use anyhow::anyhow;
 
 use crate::accumu::BeJudgeImages;
+use crate::database::{noised_image::NoisedShuttleSharedDb, object_detected::ObjectShuttleSharedDb};
+use crate::accumu::{NoisedImageStore, ObjectDetectionDataStore};
+
 
 ///テスト用の関数です．特に意味はありません．helloを返します．
 #[get["/"]]
@@ -39,6 +42,7 @@ async fn una(state: web::Data<AppState>) -> impl Responder {
 
     // let json_string = serde_json::to_string(&vec_i).unwrap();
 
+
     let sercrt = state.secret.clone();
     let image_path = "gs://cloud-samples-data/vision/demo-img.jpg";
 
@@ -55,6 +59,7 @@ async fn una(state: web::Data<AppState>) -> impl Responder {
 async fn judge_captcha(request: web::Json<BeJudgeImages>) -> impl Responder {
     // GCPかAWSに投げる
     let is_human = true;
+
 
     for image_url in request.noized_images.iter() {
         println!("{}", image_url.image_url);
@@ -75,7 +80,7 @@ async fn get_captha_images(
     // let object_label = object_label.clone();
     // HttpResponse::Ok().body(object_label)
 
-    let frontend_data = crate::database::noised_image::select(&object_label, &state.pool).await;
+    let frontend_data = NoisedShuttleSharedDb.select(&object_label, &state.pool).await;
     // Okならデータを返す Errならbad requestを返す
     match frontend_data {
         Ok(data) => HttpResponse::Ok().json(data),
