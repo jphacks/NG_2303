@@ -57,3 +57,5 @@ Adversarial ArmorはReactを用いたWebアプリケーションである．
 * 
 * 
 
+### デモ動画（※音声が出ます）
+https://github.com/jphacks/NG_2303/assets/115918416/4017221d-0bcf-4ab6-ba08-3bc3203ec828
